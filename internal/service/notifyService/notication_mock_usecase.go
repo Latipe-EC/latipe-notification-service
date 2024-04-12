@@ -5,6 +5,7 @@
 package notifyService
 
 import (
+	context "context"
 	dto "latipe-notification-service/internal/domain/dto"
 	reflect "reflect"
 
@@ -35,91 +36,106 @@ func (m *MockNotificationService) EXPECT() *MockNotificationServiceMockRecorder 
 }
 
 // ClearAllNotification mocks base method.
-func (m *MockNotificationService) ClearAllNotification(req *dto.ClearNotificationRequest) (*dto.ClearNotificationResponse, error) {
+func (m *MockNotificationService) ClearAllNotification(ctx context.Context, req *dto.ClearNotificationRequest) (*dto.ClearNotificationResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "ClearAllNotification", req)
+	ret := m.ctrl.Call(m, "ClearAllNotification", ctx, req)
 	ret0, _ := ret[0].(*dto.ClearNotificationResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // ClearAllNotification indicates an expected call of ClearAllNotification.
-func (mr *MockNotificationServiceMockRecorder) ClearAllNotification(req interface{}) *gomock.Call {
+func (mr *MockNotificationServiceMockRecorder) ClearAllNotification(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClearAllNotification", reflect.TypeOf((*MockNotificationService)(nil).ClearAllNotification), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "ClearAllNotification", reflect.TypeOf((*MockNotificationService)(nil).ClearAllNotification), ctx, req)
 }
 
 // GetNotificationDetail mocks base method.
-func (m *MockNotificationService) GetNotificationDetail(req *dto.GetNotificationDetailRequest) (*dto.GetNotificationDetailResponse, error) {
+func (m *MockNotificationService) GetNotificationDetail(ctx context.Context, req *dto.GetNotificationDetailRequest) (*dto.GetNotificationDetailResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetNotificationDetail", req)
+	ret := m.ctrl.Call(m, "GetNotificationDetail", ctx, req)
 	ret0, _ := ret[0].(*dto.GetNotificationDetailResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetNotificationDetail indicates an expected call of GetNotificationDetail.
-func (mr *MockNotificationServiceMockRecorder) GetNotificationDetail(req interface{}) *gomock.Call {
+func (mr *MockNotificationServiceMockRecorder) GetNotificationDetail(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNotificationDetail", reflect.TypeOf((*MockNotificationService)(nil).GetNotificationDetail), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNotificationDetail", reflect.TypeOf((*MockNotificationService)(nil).GetNotificationDetail), ctx, req)
 }
 
 // GetNotificationsOfUser mocks base method.
-func (m *MockNotificationService) GetNotificationsOfUser(req *dto.GetNotificationsRequest) (*dto.GetNotificationsResponse, error) {
+func (m *MockNotificationService) GetNotificationsOfUser(ctx context.Context, req *dto.GetNotificationsRequest) (*dto.GetNotificationsResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "GetNotificationsOfUser", req)
+	ret := m.ctrl.Call(m, "GetNotificationsOfUser", ctx, req)
 	ret0, _ := ret[0].(*dto.GetNotificationsResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // GetNotificationsOfUser indicates an expected call of GetNotificationsOfUser.
-func (mr *MockNotificationServiceMockRecorder) GetNotificationsOfUser(req interface{}) *gomock.Call {
+func (mr *MockNotificationServiceMockRecorder) GetNotificationsOfUser(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNotificationsOfUser", reflect.TypeOf((*MockNotificationService)(nil).GetNotificationsOfUser), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetNotificationsOfUser", reflect.TypeOf((*MockNotificationService)(nil).GetNotificationsOfUser), ctx, req)
 }
 
 // MarkAsRead mocks base method.
-func (m *MockNotificationService) MarkAsRead(req *dto.MarkAsReadRequest) (*dto.MarkAsReadResponse, error) {
+func (m *MockNotificationService) MarkAsRead(ctx context.Context, req *dto.MarkAsReadRequest) (*dto.MarkAsReadResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MarkAsRead", req)
+	ret := m.ctrl.Call(m, "MarkAsRead", ctx, req)
 	ret0, _ := ret[0].(*dto.MarkAsReadResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // MarkAsRead indicates an expected call of MarkAsRead.
-func (mr *MockNotificationServiceMockRecorder) MarkAsRead(req interface{}) *gomock.Call {
+func (mr *MockNotificationServiceMockRecorder) MarkAsRead(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkAsRead", reflect.TypeOf((*MockNotificationService)(nil).MarkAsRead), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkAsRead", reflect.TypeOf((*MockNotificationService)(nil).MarkAsRead), ctx, req)
+}
+
+// SendCampaignNotification mocks base method.
+func (m *MockNotificationService) SendCampaignNotification(ctx context.Context, req *dto.SendCampaignNotificationRequest) (*dto.SendCampaignNotificationResponse, error) {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "SendCampaignNotification", ctx, req)
+	ret0, _ := ret[0].(*dto.SendCampaignNotificationResponse)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SendCampaignNotification indicates an expected call of SendCampaignNotification.
+func (mr *MockNotificationServiceMockRecorder) SendCampaignNotification(ctx, req interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCampaignNotification", reflect.TypeOf((*MockNotificationService)(nil).SendCampaignNotification), ctx, req)
 }
 
 // SendNotification mocks base method.
-func (m *MockNotificationService) SendNotification(req *dto.SendNotificationRequest) (*dto.SendNotificationResponse, error) {
+func (m *MockNotificationService) SendNotification(ctx context.Context, req *dto.SendNotificationRequest) (*dto.SendNotificationResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendNotification", req)
+	ret := m.ctrl.Call(m, "SendNotification", ctx, req)
 	ret0, _ := ret[0].(*dto.SendNotificationResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // SendNotification indicates an expected call of SendNotification.
-func (mr *MockNotificationServiceMockRecorder) SendNotification(req interface{}) *gomock.Call {
+func (mr *MockNotificationServiceMockRecorder) SendNotification(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendNotification", reflect.TypeOf((*MockNotificationService)(nil).SendNotification), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendNotification", reflect.TypeOf((*MockNotificationService)(nil).SendNotification), ctx, req)
 }
 
 // TotalUnreadNotification mocks base method.
-func (m *MockNotificationService) TotalUnreadNotification(req *dto.TotalUnreadNotificationRequest) (*dto.TotalUnreadNotificationResponse, error) {
+func (m *MockNotificationService) TotalUnreadNotification(ctx context.Context, req *dto.TotalUnreadNotificationRequest) (*dto.TotalUnreadNotificationResponse, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "TotalUnreadNotification", req)
+	ret := m.ctrl.Call(m, "TotalUnreadNotification", ctx, req)
 	ret0, _ := ret[0].(*dto.TotalUnreadNotificationResponse)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
 // TotalUnreadNotification indicates an expected call of TotalUnreadNotification.
-func (mr *MockNotificationServiceMockRecorder) TotalUnreadNotification(req interface{}) *gomock.Call {
+func (mr *MockNotificationServiceMockRecorder) TotalUnreadNotification(ctx, req interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TotalUnreadNotification", reflect.TypeOf((*MockNotificationService)(nil).TotalUnreadNotification), req)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "TotalUnreadNotification", reflect.TypeOf((*MockNotificationService)(nil).TotalUnreadNotification), ctx, req)
 }

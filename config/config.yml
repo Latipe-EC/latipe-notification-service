@@ -3,7 +3,7 @@ Server:
   Name: "Notification service"
   AppVersion: 1.0.0
   BaseURI: 127.0.0.1:5050
-  RestPort: :5050
+  RestAPIPort: :5050
   GrpcPort: :6050
   DebugMode: false
   ReadTimeout: 5s
@@ -47,3 +47,9 @@ AdapterService:
   UserService:
     UserURL: http://localhost:8181
     InternalKey:
+
+GRPC:
+  APIKey: 123456
+
+Firebase:
+  ServiceAccountKeyFilePath: config/firebase-service-account.json

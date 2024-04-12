@@ -4,6 +4,7 @@ import "time"
 
 type AppConfig struct {
 	Server         Server
+	GRPC           GRPC
 	DB             DB
 	Cache          Cache
 	RabbitMQ       RabbitMQ
@@ -28,7 +29,9 @@ type Server struct {
 	MaxCountRequest     int           // max count of connections
 	ExpirationLimitTime time.Duration //  expiration time of the limit
 }
-
+type GRPC struct {
+	APIKey string
+}
 type Cache struct {
 	Redis Redis
 }

@@ -1,7 +1,7 @@
 package dto
 
 type GetNotificationDetailRequest struct {
-	ID string `json:"id"`
+	ID string `params:"id" json:"id"`
 }
 
 type NotificationDetailResponse struct {
