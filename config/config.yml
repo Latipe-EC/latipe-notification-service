@@ -1,0 +1,49 @@
+Server:
+  KeyID: notification-cluster0
+  Name: "Notification service"
+  AppVersion: 1.0.0
+  BaseURI: 127.0.0.1:5050
+  RestPort: :5050
+  GrpcPort: :6050
+  DebugMode: false
+  ReadTimeout: 5s
+  WriteTimeout: 5s
+  SSL: true
+  CtxDefaultTimeout: 5
+  ExpirationLimitTime: 30s
+
+DB:
+  Mongodb:
+    Connection: mongodb://localhost:27017
+    DbName: latipe-notification-db
+    Username: root
+    Password: 123123
+    ConnectTimeout: 10
+    MaxConnIdleTime:
+    MinPoolSize:
+    MaxPoolSize: 20
+
+Cache:
+  Redis:
+    Address: localhost
+    Port: 6379
+    Password:
+    DB: 9
+
+RabbitMQ:
+  ServiceName: transaction_service
+  Connection: amqp://guest:guest@localhost:5672/
+  ConsumerName: notification_service
+  ProducerName: notification_service
+
+  OrderTransactionExchange: notify_exchange
+  OrderCommitRoutingKey: notify.send
+
+
+AdapterService:
+  AuthService:
+    BaseURL: http://localhost:8081
+    InternalKey:
+  UserService:
+    UserURL: http://localhost:8181
+    InternalKey:
