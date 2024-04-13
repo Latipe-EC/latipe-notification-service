@@ -7,6 +7,7 @@ import (
 	"github.com/ansrivas/fiberprometheus/v2"
 	"github.com/bytedance/sonic"
 	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/google/wire"
 	"latipe-notification-service/config"
@@ -62,6 +63,11 @@ func NewServer(
 		JSONDecoder:  sonic.Unmarshal,
 		JSONEncoder:  sonic.Marshal,
 	})
+
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "http://127.0.0.1:5500",
+		AllowHeaders: "Origin, Content-Type, Accept",
+	}))
 
 	prometheus := fiberprometheus.New("notification-service")
 	prometheus.RegisterAt(app, "/metrics")

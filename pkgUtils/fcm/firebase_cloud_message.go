@@ -48,7 +48,7 @@ func (fcm *FirebaseCloudMessage) SendToSingleDevice(ctx context.Context, message
 		log.Errorf("Error sending message: %s", err)
 	}
 	// Response is a message ID string.
-	log.Infof("Successfully sent message: %s", response)
+	log.Infof("Successfully sent message: %v", response)
 	return nil
 }
 
@@ -68,7 +68,7 @@ func (fcm *FirebaseCloudMessage) SendToTopic(ctx context.Context, message *messa
 		log.Errorf("Error sending message: %s", err)
 	}
 	// Response is a message ID string.
-	log.Infof("Successfully sent message: %s", response)
+	log.Infof("Successfully sent message: %v", response)
 	return nil
 }
 
@@ -78,7 +78,7 @@ func (fcm *FirebaseCloudMessage) SendToCondition(ctx context.Context, message *m
 		log.Errorf("Error sending message: %s", err)
 	}
 	// Response is a message ID string.
-	log.Infof("Successfully sent message: %s", response)
+	log.Infof("Successfully sent message: %v", response)
 	return nil
 }
 
@@ -88,6 +88,6 @@ func (fcm *FirebaseCloudMessage) SendToDeviceGroup(ctx context.Context, message 
 		log.Errorf("Error sending message: %s", err)
 	}
 	// Response is a message ID string.
-	log.Infof("Successfully sent message: %s", response)
+	log.Infof("Successfully sent message: %v", response)
 	return nil
 }

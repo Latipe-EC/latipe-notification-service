@@ -7,7 +7,7 @@ import (
 
 type Notification struct {
 	ID              primitive.ObjectID `bson:"_id,omitempty" json:"id,omitempty"`
-	Owner           primitive.ObjectID `bson:"owner,omitempty" json:"owner,omitempty"`
+	Owner           string             `bson:"owner,omitempty" json:"owner,omitempty"`
 	Title           string             `bson:"title" json:"title"`
 	Image           string             `bson:"image,omitempty" json:"image,omitempty"`
 	Body            string             `bson:"body" json:"body"`

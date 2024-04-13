@@ -38,6 +38,8 @@ require (
 	github.com/go-playground/locales v0.14.1 // indirect
 	github.com/go-playground/universal-translator v0.18.1 // indirect
 	github.com/gofiber/adaptor/v2 v2.2.1 // indirect
+	github.com/gofiber/fiber/v3 v3.0.0-beta.2 // indirect
+	github.com/gofiber/utils/v2 v2.0.0-beta.4 // indirect
 	github.com/golang/groupcache v0.0.0-20210331224755-41bb18bfe9da // indirect
 	github.com/golang/protobuf v1.5.4 // indirect
 	github.com/golang/snappy v0.0.4 // indirect

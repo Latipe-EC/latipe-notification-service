@@ -34,5 +34,6 @@ func (n notificationRouter) Init(root *fiber.Router) {
 	notify.Delete("", n.authMiddleware.RequiredAuthentication(), n.notifyHandler.ClearAllNotification)
 	notify.Post("", n.authMiddleware.RequiredAPIKeyHeader(), n.notifyHandler.SendNotification)
 	notify.Post("/campaign", n.authMiddleware.RequiredAPIKeyHeader(), n.notifyHandler.SendCampaignNotification)
+	notify.Post("/register-device", n.notifyHandler.RegisterNewUserDevice)
 
 }

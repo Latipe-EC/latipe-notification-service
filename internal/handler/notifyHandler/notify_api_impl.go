@@ -122,13 +122,12 @@ func (n notifyHandler) SendNotification(ctx *fiber.Ctx) error {
 		return errorUtils.ErrInvalidParameters
 	}
 
-	data, err := n.notifyService.SendNotification(context, &req)
+	_, err := n.notifyService.SendNotification(context, &req)
 	if err != nil {
 		return errorUtils.ErrInternalServer
 	}
 
 	response := responses.DefaultSuccess
-	response.Data = data
 
 	return response.JSON(ctx)
 }
@@ -164,6 +163,26 @@ func (n notifyHandler) ClearAllNotification(ctx *fiber.Ctx) error {
 	req := dto.ClearNotificationRequest{UserID: userId}
 
 	data, err := n.notifyService.ClearAllNotification(context, &req)
+	if err != nil {
+		return errorUtils.ErrInternalServer
+	}
+
+	response := responses.DefaultSuccess
+	response.Data = data
+
+	return response.JSON(ctx)
+}
+
+func (n notifyHandler) RegisterNewUserDevice(ctx *fiber.Ctx) error {
+	context := ctx.Context()
+
+	req := dto.RegisterNewDevice{}
+	if err := ctx.BodyParser(&req); err != nil {
+		log.Error(err)
+		return errorUtils.ErrInvalidParameters
+	}
+
+	data, err := n.notifyService.RegisterNewUserDevice(context, &req)
 	if err != nil {
 		return errorUtils.ErrInternalServer
 	}

@@ -2,10 +2,16 @@ package notifyService
 
 import (
 	"context"
+	"firebase.google.com/go/messaging"
+	"github.com/gofiber/fiber/v2/log"
 	"latipe-notification-service/internal/domain/dto"
+	"latipe-notification-service/internal/domain/entities/notication"
+	userDevice "latipe-notification-service/internal/domain/entities/userDevice"
 	"latipe-notification-service/internal/domain/repositories/notifyRepos"
 	"latipe-notification-service/internal/domain/repositories/userDeviceRepos"
 	"latipe-notification-service/pkgUtils/fcm"
+	"latipe-notification-service/pkgUtils/util/mapper"
+	"time"
 )
 
 type notificationService struct {
@@ -45,8 +51,60 @@ func (n notificationService) SendCampaignNotification(ctx context.Context, req *
 }
 
 func (n notificationService) SendNotification(ctx context.Context, req *dto.SendNotificationRequest) (*dto.SendNotificationResponse, error) {
-	//TODO implement me
-	panic("implement me")
+	noti := notication.Notification{
+		Owner:  req.UserID,
+		Title:  req.Title,
+		Image:  req.Image,
+		Body:   req.Body,
+		Type:   req.Type,
+		UnRead: false,
+		//ScheduleDisplay: time.Time{},
+		CreatedAt: time.Now(),
+		UpdatedAt: time.Now(),
+	}
+
+	entity, err := n.notificationRepo.Save(ctx, &noti)
+	if err != nil {
+		return nil, err
+	}
+
+	if req.PushToDevice {
+		devices, err := n.userDeviceRepo.FindActiveDeviceByUserID(ctx, req.UserID)
+		if err != nil {
+			return nil, err
+		}
+
+		var deviceTokens []string
+		for _, device := range devices {
+			if device.DeviceToken != "" {
+				deviceTokens = append(deviceTokens, device.DeviceToken)
+			}
+		}
+
+		if len(deviceTokens) != 0 {
+			message := messaging.MulticastMessage{
+				Notification: &messaging.Notification{
+					Title:    req.Title,
+					Body:     req.Body,
+					ImageURL: req.Image,
+				},
+				Tokens: deviceTokens,
+			}
+
+			if err := n.fbCloudMessage.SendToMultipleDevices(ctx, &message); err != nil {
+				return nil, err
+			}
+		}
+
+	}
+
+	resp := dto.SendNotificationResponse{}
+	if err := mapper.BindingStruct(entity, &resp); err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	return &resp, nil
 }
 
 func (n notificationService) MarkAsRead(ctx context.Context, req *dto.MarkAsReadRequest) (*dto.MarkAsReadResponse, error) {
@@ -57,4 +115,29 @@ func (n notificationService) MarkAsRead(ctx context.Context, req *dto.MarkAsRead
 func (n notificationService) ClearAllNotification(ctx context.Context, req *dto.ClearNotificationRequest) (*dto.ClearNotificationResponse, error) {
 	//TODO implement me
 	panic("implement me")
+}
+
+func (n notificationService) RegisterNewUserDevice(ctx context.Context, req *dto.RegisterNewDevice) (*dto.RegisterNewDeviceResponse, error) {
+	newDevice := userDevice.UserDevice{
+		UserID:      req.UserID,
+		DeviceID:    req.DeviceID,
+		DeviceToken: req.DeviceToken,
+		DeviceType:  req.DeviceType,
+		LoggedDate:  time.Now(),
+		CreatedAt:   time.Now(),
+		UpdatedAt:   time.Now(),
+	}
+
+	entity, err := n.userDeviceRepo.Save(ctx, &newDevice)
+	if err != nil {
+		return nil, err
+	}
+
+	resp := dto.RegisterNewDeviceResponse{}
+
+	if err := mapper.BindingStruct(entity, &resp); err != nil {
+		return nil, err
+	}
+
+	return &resp, nil
 }

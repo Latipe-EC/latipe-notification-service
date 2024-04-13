@@ -12,6 +12,7 @@ type NotificationService interface {
 	TotalUnreadNotification(ctx context.Context, req *dto.TotalUnreadNotificationRequest) (*dto.TotalUnreadNotificationResponse, error)
 	SendCampaignNotification(ctx context.Context, req *dto.SendCampaignNotificationRequest) (*dto.SendCampaignNotificationResponse, error)
 	// commands
+	RegisterNewUserDevice(ctx context.Context, req *dto.RegisterNewDevice) (*dto.RegisterNewDeviceResponse, error)
 	SendNotification(ctx context.Context, req *dto.SendNotificationRequest) (*dto.SendNotificationResponse, error)
 	MarkAsRead(ctx context.Context, req *dto.MarkAsReadRequest) (*dto.MarkAsReadResponse, error)
 	ClearAllNotification(ctx context.Context, req *dto.ClearNotificationRequest) (*dto.ClearNotificationResponse, error)
