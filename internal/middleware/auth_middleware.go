@@ -2,6 +2,7 @@ package middleware
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"latipe-notification-service/config"
 	"latipe-notification-service/internal/adapter/authserv"
 	"latipe-notification-service/internal/adapter/authserv/dto"
 	"latipe-notification-service/pkgUtils/util/errorUtils"
@@ -10,10 +11,11 @@ import (
 
 type AuthMiddleware struct {
 	authServ *authserv.AuthService
+	cfg      *config.AppConfig
 }
 
-func NewAuthMiddleware(service *authserv.AuthService) *AuthMiddleware {
-	return &AuthMiddleware{authServ: service}
+func NewAuthMiddleware(service *authserv.AuthService, cfg *config.AppConfig) *AuthMiddleware {
+	return &AuthMiddleware{authServ: service, cfg: cfg}
 }
 
 func (auth AuthMiddleware) RequiredRoles(roles []string, option ...int) fiber.Handler {
@@ -79,6 +81,10 @@ func (auth AuthMiddleware) RequiredAPIKeyHeader() fiber.Handler {
 		apiKey := ctx.Get("x-api-key")
 		if apiKey == "" {
 			return errorUtils.ErrUnauthenticated
+		}
+
+		if apiKey != auth.cfg.Server.APIKey {
+			return errorUtils.ErrPermissionDenied
 		}
 
 		return ctx.Next()

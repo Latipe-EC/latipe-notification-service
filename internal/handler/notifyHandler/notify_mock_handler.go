@@ -79,7 +79,7 @@ func (mr *MockNotifyHandlerMockRecorder) GetNotificationsOfUser(ctx interface{})
 // MarkAsRead mocks base method.
 func (m *MockNotifyHandler) MarkAsRead(ctx *fiber.Ctx) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "MarkAsRead", ctx)
+	ret := m.ctrl.Call(m, "MarkAllRead", ctx)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
@@ -87,7 +87,7 @@ func (m *MockNotifyHandler) MarkAsRead(ctx *fiber.Ctx) error {
 // MarkAsRead indicates an expected call of MarkAsRead.
 func (mr *MockNotifyHandlerMockRecorder) MarkAsRead(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkAsRead", reflect.TypeOf((*MockNotifyHandler)(nil).MarkAsRead), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "MarkAllRead", reflect.TypeOf((*MockNotifyHandler)(nil).MarkAsRead), ctx)
 }
 
 // SendCampaignNotification mocks base method.

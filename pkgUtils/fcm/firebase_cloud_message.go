@@ -41,7 +41,6 @@ func NewFirebaseSDK(config *config.AppConfig) *FirebaseCloudMessage {
 	return &FirebaseCloudMessage{_app: app, _client: client}
 
 }
-
 func (fcm *FirebaseCloudMessage) SendToSingleDevice(ctx context.Context, message *messaging.Message) error {
 	response, err := fcm._client.Send(ctx, message)
 	if err != nil {
@@ -89,5 +88,23 @@ func (fcm *FirebaseCloudMessage) SendToDeviceGroup(ctx context.Context, message 
 	}
 	// Response is a message ID string.
 	log.Infof("Successfully sent message: %v", response)
+	return nil
+}
+
+func (fcm *FirebaseCloudMessage) SubscribeToTopic(ctx context.Context, registrationTokens []string, topic string) error {
+	if _, err := fcm._client.SubscribeToTopic(ctx, registrationTokens, topic); err != nil {
+		log.Errorf("Error subscribing to topic: %s", err)
+	}
+
+	log.Infof("Subscribed to topic: %s", topic)
+	return nil
+}
+
+func (fcm *FirebaseCloudMessage) UnsubscribeFromTopic(ctx context.Context, registrationTokens []string, topic string) error {
+	if _, err := fcm._client.UnsubscribeFromTopic(ctx, registrationTokens, topic); err != nil {
+		log.Errorf("Error unsubscribing from topic: %s", err)
+	}
+
+	log.Infof("Unsubscribed from topic: %s", topic)
 	return nil
 }

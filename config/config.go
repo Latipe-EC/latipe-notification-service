@@ -16,6 +16,7 @@ type Server struct {
 	KeyID               string
 	Name                string
 	AppVersion          string
+	APIKey              string
 	RestAPIPort         string
 	GrpcPort            string
 	BaseURL             string

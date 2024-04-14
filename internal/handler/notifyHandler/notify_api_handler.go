@@ -16,6 +16,6 @@ type NotifyHandler interface {
 	// commands
 	RegisterNewUserDevice(ctx *fiber.Ctx) error
 	SendNotification(ctx *fiber.Ctx) error
-	MarkAsRead(ctx *fiber.Ctx) error
+	MarkAllRead(ctx *fiber.Ctx) error
 	ClearAllNotification(ctx *fiber.Ctx) error
 }

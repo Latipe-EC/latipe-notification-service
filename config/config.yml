@@ -1,6 +1,7 @@
 Server:
   KeyID: notification-cluster0
   Name: "Notification service"
+  APIKey: f7ed9e0aff0833a0b9a80ca94708faf7
   AppVersion: 1.0.0
   BaseURI: 127.0.0.1:5050
   RestAPIPort: :5050

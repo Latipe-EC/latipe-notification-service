@@ -41,7 +41,7 @@ func New() (*Application, error) {
 	notificationService := notifyService.NewNotificationService(notificationRepository, userDeviceRepository, firebaseCloudMessage)
 	notifyHandlerNotifyHandler := notifyHandler.NewNotifyHandler(notificationService)
 	authService := authserv.NewAuthService(appConfig)
-	authMiddleware := middleware.NewAuthMiddleware(authService)
+	authMiddleware := middleware.NewAuthMiddleware(authService, appConfig)
 	notificationRouter := notifyRouter.NewNotificationRouter(notifyHandlerNotifyHandler, authMiddleware)
 	application := NewServer(appConfig, notificationRouter)
 	return application, nil
@@ -76,7 +76,8 @@ func NewServer(
 
 	app.Use(cors.New(cors.Config{
 		AllowOrigins: "http://127.0.0.1:5500",
-		AllowHeaders: "Origin, Content-Type, Accept",
+		AllowHeaders: "Origin, X-Requested-With, Content-Type, Accept, Authorization",
+		AllowMethods: "GET,HEAD,OPTIONS,POST,PUT",
 	}))
 
 	prometheus := fiberprometheus.New("notification-service")

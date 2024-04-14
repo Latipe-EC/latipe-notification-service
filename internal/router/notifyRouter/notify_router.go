@@ -25,15 +25,17 @@ func NewNotificationRouter(notifyHandler notifyHandler.NotifyHandler, authMiddle
 func (n notificationRouter) Init(root *fiber.Router) {
 	notify := (*root).Group("/notifications")
 
-	notify.Get("/total-unread", n.authMiddleware.RequiredAuthentication(), n.notifyHandler.TotalUnreadNotification)
-	notify.Get("", n.authMiddleware.RequiredAuthentication(), n.notifyHandler.GetNotificationsOfUser)
-	notify.Get("/:id", n.authMiddleware.RequiredAuthentication(), n.notifyHandler.GetNotificationDetail)
+	user := notify.Group("/user", n.authMiddleware.RequiredAuthentication())
+	user.Get("/total/unread", n.notifyHandler.TotalUnreadNotification)
+	user.Get("", n.notifyHandler.GetNotificationsOfUser)
+	user.Get("/:id", n.notifyHandler.GetNotificationDetail)
+	user.Patch("/markAsRead", n.notifyHandler.MarkAllRead)
+	user.Delete("", n.notifyHandler.ClearAllNotification)
+	user.Post("/register-device", n.notifyHandler.RegisterNewUserDevice)
 
-	//commands
-	notify.Put("/:id/read", n.authMiddleware.RequiredAuthentication(), n.notifyHandler.MarkAsRead)
-	notify.Delete("", n.authMiddleware.RequiredAuthentication(), n.notifyHandler.ClearAllNotification)
-	notify.Post("", n.authMiddleware.RequiredAPIKeyHeader(), n.notifyHandler.SendNotification)
-	notify.Post("/campaign", n.authMiddleware.RequiredAPIKeyHeader(), n.notifyHandler.SendCampaignNotification)
-	notify.Post("/register-device", n.notifyHandler.RegisterNewUserDevice)
+	//internal services
+	internal := notify.Group("/internal", n.authMiddleware.RequiredAPIKeyHeader())
+	internal.Post("/notify-message", n.notifyHandler.SendNotification)
+	internal.Post("/notify-campaign", n.notifyHandler.SendCampaignNotification)
 
 }

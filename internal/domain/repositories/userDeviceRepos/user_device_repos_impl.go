@@ -45,7 +45,7 @@ func (u userDeviceRepository) FindByDeviceID(ctx context.Context, deviceID strin
 func (u userDeviceRepository) FindActiveDeviceByUserID(ctx context.Context, userID string) ([]*userDevice.UserDevice, error) {
 	var entities []*userDevice.UserDevice
 
-	cursor, err := u._deviceCol.Find(ctx, bson.M{"user_id": userID, "is_deleted": false})
+	cursor, err := u._deviceCol.Find(ctx, bson.M{"user_id": userID, "is_active": true})
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -75,4 +75,19 @@ func (u userDeviceRepository) Update(ctx context.Context, entity *userDevice.Use
 	}
 
 	return nil
+}
+
+func (u userDeviceRepository) GetAllActiveDeviceToken(ctx context.Context) ([]string, error) {
+	tokens, err := u._deviceCol.Distinct(ctx, "device_token", bson.M{"unread": true, "is_active": true})
+	if err != nil {
+		log.Error(err)
+		return nil, err
+	}
+
+	var deviceTokens []string
+	for _, token := range tokens {
+		deviceTokens = append(deviceTokens, token.(string))
+	}
+
+	return nil, err
 }

@@ -10,6 +10,7 @@ import (
 	"latipe-notification-service/pkgUtils/util/errorUtils"
 	"latipe-notification-service/pkgUtils/util/pagable"
 	responses "latipe-notification-service/pkgUtils/util/response"
+	"latipe-notification-service/pkgUtils/util/valid"
 )
 
 type notifyHandler struct {
@@ -102,6 +103,10 @@ func (n notifyHandler) SendCampaignNotification(ctx *fiber.Ctx) error {
 		return errorUtils.ErrInvalidParameters
 	}
 
+	if err := valid.GetValidator().Validate(&req); err != nil {
+		return errorUtils.ErrInvalidParameters
+	}
+
 	data, err := n.notifyService.SendCampaignNotification(context, &req)
 	if err != nil {
 		return errorUtils.ErrInternalServer
@@ -122,6 +127,10 @@ func (n notifyHandler) SendNotification(ctx *fiber.Ctx) error {
 		return errorUtils.ErrInvalidParameters
 	}
 
+	if err := valid.GetValidator().Validate(&req); err != nil {
+		return errorUtils.ErrInvalidParameters
+	}
+
 	_, err := n.notifyService.SendNotification(context, &req)
 	if err != nil {
 		return errorUtils.ErrInternalServer
@@ -132,16 +141,17 @@ func (n notifyHandler) SendNotification(ctx *fiber.Ctx) error {
 	return response.JSON(ctx)
 }
 
-func (n notifyHandler) MarkAsRead(ctx *fiber.Ctx) error {
+func (n notifyHandler) MarkAllRead(ctx *fiber.Ctx) error {
 	context := ctx.Context()
 
-	req := dto.MarkAsReadRequest{}
-	if err := ctx.BodyParser(&req); err != nil {
-		log.Error(err)
-		return errorUtils.ErrInvalidParameters
+	userID := fmt.Sprintf("%s", ctx.Locals(middleware.USER_ID))
+	if userID == "" {
+		return errorUtils.ErrUnauthenticated
 	}
 
-	data, err := n.notifyService.MarkAsRead(context, &req)
+	req := dto.MarkAsReadRequest{userID}
+
+	data, err := n.notifyService.MarkAllRead(context, &req)
 	if err != nil {
 		return errorUtils.ErrInternalServer
 	}
@@ -176,9 +186,20 @@ func (n notifyHandler) ClearAllNotification(ctx *fiber.Ctx) error {
 func (n notifyHandler) RegisterNewUserDevice(ctx *fiber.Ctx) error {
 	context := ctx.Context()
 
+	userId := fmt.Sprintf("%s", ctx.Locals(middleware.USER_ID))
+	if userId == "" {
+		return errorUtils.ErrUnauthenticated
+	}
+
 	req := dto.RegisterNewDevice{}
 	if err := ctx.BodyParser(&req); err != nil {
 		log.Error(err)
+		return errorUtils.ErrInvalidParameters
+	}
+
+	req.UserID = userId
+
+	if err := valid.GetValidator().Validate(&req); err != nil {
 		return errorUtils.ErrInvalidParameters
 	}
 

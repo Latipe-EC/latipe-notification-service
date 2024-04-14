@@ -3,6 +3,7 @@ package mongodb
 import (
 	"context"
 	"github.com/gofiber/fiber/v2/log"
+	"go.mongodb.org/mongo-driver/event"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
 	"go.mongodb.org/mongo-driver/mongo/readpref"
@@ -19,7 +20,21 @@ type MongoClient struct {
 func OpenMongoDBConnection(cfg *config.AppConfig) (*MongoClient, error) {
 	ctx := context.Background()
 
-	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(cfg.DB.Mongodb.Connection))
+	monitor := &event.CommandMonitor{
+		Started: func(ctx context.Context, e *event.CommandStartedEvent) {
+			log.Info(e.Command)
+		},
+		Succeeded: func(ctx context.Context, e *event.CommandSucceededEvent) {
+
+		},
+		Failed: func(ctx context.Context, failedEvent *event.CommandFailedEvent) {
+			log.Error(failedEvent.Failure)
+		},
+	}
+
+	opts := options.Client().SetMonitor(monitor)
+
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI(cfg.DB.Mongodb.Connection), opts)
 	if err != nil {
 		return nil, err
 	}
