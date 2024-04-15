@@ -25,6 +25,7 @@ It is built using Go (Fiber and gRPC).
 - Mark notification as read
 - Mark all notifications as read
 - Delete all notifications
+- [Admin] Health check and metrics
 
 ### How to run
 
