@@ -19,7 +19,9 @@ message CreateNotificationRequest {
   string title = 1;
   string body = 2;
   string image = 3;
-  string userId = 4;
+  string user_id = 4;
+  int32 type = 5;
+  bool push_to_device = 6;
 }
 
 message CreateNotificationResponse {
@@ -27,19 +29,19 @@ message CreateNotificationResponse {
 }
 
 message CreateCampaignRequest {
-  string notificationId = 1;
+  string notification_id = 1;
   string title = 2;
   string body = 3;
   string image = 4;
-  google.protobuf.Timestamp scheduleDisplay = 5;
+  google.protobuf.Timestamp schedule_display = 5;
 }
 
 message CreateCampaignResponse {
-  string notificationId = 1;
+  string notification_id = 1;
 }
 
 message GetNotificationByIdRequest {
-  string notificationId = 1;
+  string notification_id = 1;
 }
 
 message GetNotificationResponse {
@@ -47,7 +49,9 @@ message GetNotificationResponse {
 }
 
 message GetNotificationByUserRequest{
-  string userId = 1;
+  string user_id = 1;
+  int32 page = 2;
+  int32 size = 3;
 }
 
 message GetNotificationByUserResponse{
@@ -55,11 +59,11 @@ message GetNotificationByUserResponse{
 }
 
 message NotificationResponse {
-  string Id = 1;
+  string id = 1;
   string title = 2;
   string body = 3;
   string image = 4;
-  string ownerId = 5;
+  string owner_id = 5;
   int32 type = 6;
   google.protobuf.Timestamp createdAt = 7;
   google.protobuf.Timestamp updatedAt = 8;
