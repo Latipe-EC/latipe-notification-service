@@ -22,9 +22,12 @@ const _ = grpc.SupportPackageIsVersion7
 //
 // For semantics around ctx use and closing/ending streaming RPCs, please refer to https://pkg.go.dev/google.golang.org/grpc/?tab=doc#ClientConn.NewStream.
 type NotificationServiceClient interface {
-	CreateOrderNotification(ctx context.Context, in *CreateOrderNotificationRequest, opts ...grpc.CallOption) (*CreateOrderNotificationResponse, error)
-	GetNotificationById(ctx context.Context, in *GetNotificationByIdRequest, opts ...grpc.CallOption) (*GetNotificationByIdResponse, error)
-	GetNotificationByUserId(ctx context.Context, in *GetNotificationByUserIdRequest, opts ...grpc.CallOption) (*GetNotificationByUserIdResponse, error)
+	// commands
+	SendNotificationToUser(ctx context.Context, in *CreateNotificationRequest, opts ...grpc.CallOption) (*CreateNotificationResponse, error)
+	SendCampaign(ctx context.Context, in *CreateCampaignRequest, opts ...grpc.CallOption) (*CreateCampaignResponse, error)
+	// query
+	GetNotificationById(ctx context.Context, in *GetNotificationByIdRequest, opts ...grpc.CallOption) (*GetNotificationResponse, error)
+	GetNotificationUserId(ctx context.Context, in *GetNotificationByUserRequest, opts ...grpc.CallOption) (*GetNotificationByUserResponse, error)
 }
 
 type notificationServiceClient struct {
@@ -35,17 +38,26 @@ func NewNotificationServiceClient(cc grpc.ClientConnInterface) NotificationServi
 	return &notificationServiceClient{cc}
 }
 
-func (c *notificationServiceClient) CreateOrderNotification(ctx context.Context, in *CreateOrderNotificationRequest, opts ...grpc.CallOption) (*CreateOrderNotificationResponse, error) {
-	out := new(CreateOrderNotificationResponse)
-	err := c.cc.Invoke(ctx, "/NotificationService/CreateOrderNotification", in, out, opts...)
+func (c *notificationServiceClient) SendNotificationToUser(ctx context.Context, in *CreateNotificationRequest, opts ...grpc.CallOption) (*CreateNotificationResponse, error) {
+	out := new(CreateNotificationResponse)
+	err := c.cc.Invoke(ctx, "/NotificationService/SendNotificationToUser", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
 	return out, nil
 }
 
-func (c *notificationServiceClient) GetNotificationById(ctx context.Context, in *GetNotificationByIdRequest, opts ...grpc.CallOption) (*GetNotificationByIdResponse, error) {
-	out := new(GetNotificationByIdResponse)
+func (c *notificationServiceClient) SendCampaign(ctx context.Context, in *CreateCampaignRequest, opts ...grpc.CallOption) (*CreateCampaignResponse, error) {
+	out := new(CreateCampaignResponse)
+	err := c.cc.Invoke(ctx, "/NotificationService/SendCampaign", in, out, opts...)
+	if err != nil {
+		return nil, err
+	}
+	return out, nil
+}
+
+func (c *notificationServiceClient) GetNotificationById(ctx context.Context, in *GetNotificationByIdRequest, opts ...grpc.CallOption) (*GetNotificationResponse, error) {
+	out := new(GetNotificationResponse)
 	err := c.cc.Invoke(ctx, "/NotificationService/GetNotificationById", in, out, opts...)
 	if err != nil {
 		return nil, err
@@ -53,9 +65,9 @@ func (c *notificationServiceClient) GetNotificationById(ctx context.Context, in 
 	return out, nil
 }
 
-func (c *notificationServiceClient) GetNotificationByUserId(ctx context.Context, in *GetNotificationByUserIdRequest, opts ...grpc.CallOption) (*GetNotificationByUserIdResponse, error) {
-	out := new(GetNotificationByUserIdResponse)
-	err := c.cc.Invoke(ctx, "/NotificationService/GetNotificationByUserId", in, out, opts...)
+func (c *notificationServiceClient) GetNotificationUserId(ctx context.Context, in *GetNotificationByUserRequest, opts ...grpc.CallOption) (*GetNotificationByUserResponse, error) {
+	out := new(GetNotificationByUserResponse)
+	err := c.cc.Invoke(ctx, "/NotificationService/GetNotificationUserId", in, out, opts...)
 	if err != nil {
 		return nil, err
 	}
@@ -66,9 +78,12 @@ func (c *notificationServiceClient) GetNotificationByUserId(ctx context.Context,
 // All implementations must embed UnimplementedNotificationServiceServer
 // for forward compatibility
 type NotificationServiceServer interface {
-	CreateOrderNotification(context.Context, *CreateOrderNotificationRequest) (*CreateOrderNotificationResponse, error)
-	GetNotificationById(context.Context, *GetNotificationByIdRequest) (*GetNotificationByIdResponse, error)
-	GetNotificationByUserId(context.Context, *GetNotificationByUserIdRequest) (*GetNotificationByUserIdResponse, error)
+	// commands
+	SendNotificationToUser(context.Context, *CreateNotificationRequest) (*CreateNotificationResponse, error)
+	SendCampaign(context.Context, *CreateCampaignRequest) (*CreateCampaignResponse, error)
+	// query
+	GetNotificationById(context.Context, *GetNotificationByIdRequest) (*GetNotificationResponse, error)
+	GetNotificationUserId(context.Context, *GetNotificationByUserRequest) (*GetNotificationByUserResponse, error)
 	mustEmbedUnimplementedNotificationServiceServer()
 }
 
@@ -76,14 +91,17 @@ type NotificationServiceServer interface {
 type UnimplementedNotificationServiceServer struct {
 }
 
-func (UnimplementedNotificationServiceServer) CreateOrderNotification(context.Context, *CreateOrderNotificationRequest) (*CreateOrderNotificationResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method CreateOrderNotification not implemented")
+func (UnimplementedNotificationServiceServer) SendNotificationToUser(context.Context, *CreateNotificationRequest) (*CreateNotificationResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendNotificationToUser not implemented")
 }
-func (UnimplementedNotificationServiceServer) GetNotificationById(context.Context, *GetNotificationByIdRequest) (*GetNotificationByIdResponse, error) {
+func (UnimplementedNotificationServiceServer) SendCampaign(context.Context, *CreateCampaignRequest) (*CreateCampaignResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method SendCampaign not implemented")
+}
+func (UnimplementedNotificationServiceServer) GetNotificationById(context.Context, *GetNotificationByIdRequest) (*GetNotificationResponse, error) {
 	return nil, status.Errorf(codes.Unimplemented, "method GetNotificationById not implemented")
 }
-func (UnimplementedNotificationServiceServer) GetNotificationByUserId(context.Context, *GetNotificationByUserIdRequest) (*GetNotificationByUserIdResponse, error) {
-	return nil, status.Errorf(codes.Unimplemented, "method GetNotificationByUserId not implemented")
+func (UnimplementedNotificationServiceServer) GetNotificationUserId(context.Context, *GetNotificationByUserRequest) (*GetNotificationByUserResponse, error) {
+	return nil, status.Errorf(codes.Unimplemented, "method GetNotificationUserId not implemented")
 }
 func (UnimplementedNotificationServiceServer) mustEmbedUnimplementedNotificationServiceServer() {}
 
@@ -98,20 +116,38 @@ func RegisterNotificationServiceServer(s grpc.ServiceRegistrar, srv Notification
 	s.RegisterService(&NotificationService_ServiceDesc, srv)
 }
 
-func _NotificationService_CreateOrderNotification_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(CreateOrderNotificationRequest)
+func _NotificationService_SendNotificationToUser_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateNotificationRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NotificationServiceServer).CreateOrderNotification(ctx, in)
+		return srv.(NotificationServiceServer).SendNotificationToUser(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/NotificationService/CreateOrderNotification",
+		FullMethod: "/NotificationService/SendNotificationToUser",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NotificationServiceServer).CreateOrderNotification(ctx, req.(*CreateOrderNotificationRequest))
+		return srv.(NotificationServiceServer).SendNotificationToUser(ctx, req.(*CreateNotificationRequest))
+	}
+	return interceptor(ctx, in, info, handler)
+}
+
+func _NotificationService_SendCampaign_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(CreateCampaignRequest)
+	if err := dec(in); err != nil {
+		return nil, err
+	}
+	if interceptor == nil {
+		return srv.(NotificationServiceServer).SendCampaign(ctx, in)
+	}
+	info := &grpc.UnaryServerInfo{
+		Server:     srv,
+		FullMethod: "/NotificationService/SendCampaign",
+	}
+	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
+		return srv.(NotificationServiceServer).SendCampaign(ctx, req.(*CreateCampaignRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -134,20 +170,20 @@ func _NotificationService_GetNotificationById_Handler(srv interface{}, ctx conte
 	return interceptor(ctx, in, info, handler)
 }
 
-func _NotificationService_GetNotificationByUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
-	in := new(GetNotificationByUserIdRequest)
+func _NotificationService_GetNotificationUserId_Handler(srv interface{}, ctx context.Context, dec func(interface{}) error, interceptor grpc.UnaryServerInterceptor) (interface{}, error) {
+	in := new(GetNotificationByUserRequest)
 	if err := dec(in); err != nil {
 		return nil, err
 	}
 	if interceptor == nil {
-		return srv.(NotificationServiceServer).GetNotificationByUserId(ctx, in)
+		return srv.(NotificationServiceServer).GetNotificationUserId(ctx, in)
 	}
 	info := &grpc.UnaryServerInfo{
 		Server:     srv,
-		FullMethod: "/NotificationService/GetNotificationByUserId",
+		FullMethod: "/NotificationService/GetNotificationUserId",
 	}
 	handler := func(ctx context.Context, req interface{}) (interface{}, error) {
-		return srv.(NotificationServiceServer).GetNotificationByUserId(ctx, req.(*GetNotificationByUserIdRequest))
+		return srv.(NotificationServiceServer).GetNotificationUserId(ctx, req.(*GetNotificationByUserRequest))
 	}
 	return interceptor(ctx, in, info, handler)
 }
@@ -160,16 +196,20 @@ var NotificationService_ServiceDesc = grpc.ServiceDesc{
 	HandlerType: (*NotificationServiceServer)(nil),
 	Methods: []grpc.MethodDesc{
 		{
-			MethodName: "CreateOrderNotification",
-			Handler:    _NotificationService_CreateOrderNotification_Handler,
+			MethodName: "SendNotificationToUser",
+			Handler:    _NotificationService_SendNotificationToUser_Handler,
+		},
+		{
+			MethodName: "SendCampaign",
+			Handler:    _NotificationService_SendCampaign_Handler,
 		},
 		{
 			MethodName: "GetNotificationById",
 			Handler:    _NotificationService_GetNotificationById_Handler,
 		},
 		{
-			MethodName: "GetNotificationByUserId",
-			Handler:    _NotificationService_GetNotificationByUserId_Handler,
+			MethodName: "GetNotificationUserId",
+			Handler:    _NotificationService_GetNotificationUserId_Handler,
 		},
 	},
 	Streams:  []grpc.StreamDesc{},

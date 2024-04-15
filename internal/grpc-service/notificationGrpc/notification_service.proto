@@ -6,19 +6,35 @@ import "google/protobuf/timestamp.proto";
 
 
 service NotificationService {
-  rpc CreateOrderNotification(CreateOrderNotificationRequest) returns (CreateOrderNotificationResponse);
-  rpc GetNotificationById(GetNotificationByIdRequest) returns (GetNotificationByIdResponse);
-  rpc GetNotificationByUserId(GetNotificationByUserIdRequest) returns (GetNotificationByUserIdResponse);
+  //commands
+  rpc SendNotificationToUser(CreateNotificationRequest) returns (CreateNotificationResponse);
+  rpc SendCampaign(CreateCampaignRequest) returns (CreateCampaignResponse);
+  //query
+  rpc GetNotificationById(GetNotificationByIdRequest) returns (GetNotificationResponse);
+  rpc GetNotificationUserId(GetNotificationByUserRequest)returns (GetNotificationByUserResponse);
+
 }
 
-message CreateOrderNotificationRequest {
-  string orderId = 1;
-  string userId = 2;
-  int32 status = 3;
-  google.protobuf.Timestamp createdAt = 4;
+message CreateNotificationRequest {
+  string title = 1;
+  string body = 2;
+  string image = 3;
+  string userId = 4;
 }
 
-message CreateOrderNotificationResponse {
+message CreateNotificationResponse {
+  string notificationId = 1;
+}
+
+message CreateCampaignRequest {
+  string notificationId = 1;
+  string title = 2;
+  string body = 3;
+  string image = 4;
+  google.protobuf.Timestamp scheduleDisplay = 5;
+}
+
+message CreateCampaignResponse {
   string notificationId = 1;
 }
 
@@ -26,24 +42,26 @@ message GetNotificationByIdRequest {
   string notificationId = 1;
 }
 
-message GetNotificationByIdResponse {
-  string id = 1;
-  string title = 2;
-  string ownerId = 3;
-  string body = 4;
-  string image = 5;
-  int32 type = 6;
-  bool unRead = 7;
-  google.protobuf.Timestamp createdAt = 8;
-  google.protobuf.Timestamp updatedAt = 9;
+message GetNotificationResponse {
+  NotificationResponse notification = 1;
 }
 
-message GetNotificationByUserIdRequest {
+message GetNotificationByUserRequest{
   string userId = 1;
-  int32 size = 2;
-  int32 page = 3;
 }
 
-message GetNotificationByUserIdResponse {
-  repeated GetNotificationByIdResponse notifications = 1;
+message GetNotificationByUserResponse{
+  repeated NotificationResponse notifications = 1;
 }
+
+message NotificationResponse {
+  string Id = 1;
+  string title = 2;
+  string body = 3;
+  string image = 4;
+  string ownerId = 5;
+  int32 type = 6;
+  google.protobuf.Timestamp createdAt = 7;
+  google.protobuf.Timestamp updatedAt = 8;
+}
+

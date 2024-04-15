@@ -32,7 +32,7 @@ Cache:
     DB: 9
 
 RabbitMQ:
-  ServiceName: transaction_service
+  ServiceName: notify_service
   Connection: amqp://guest:guest@localhost:5672/
   ConsumerName: notification_service
   ProducerName: notification_service
