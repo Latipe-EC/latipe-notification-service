@@ -37,8 +37,8 @@ RabbitMQ:
   ConsumerName: notification_service
   ProducerName: notification_service
 
-  OrderTransactionExchange: notify_exchange
-  OrderCommitRoutingKey: notify.send
+  NotificationExchange: notify_exchange
+  SendMessageRoutingKey: notify.send
 
 
 AdapterService:
