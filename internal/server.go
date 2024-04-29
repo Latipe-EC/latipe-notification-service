@@ -27,6 +27,8 @@ import (
 	"latipe-notification-service/internal/router"
 	"latipe-notification-service/internal/router/notifyRouter"
 	"latipe-notification-service/internal/service"
+	"latipe-notification-service/internal/subs"
+	"latipe-notification-service/internal/subs/notifySubs"
 	"latipe-notification-service/pkgUtils/db/mongodb"
 	"latipe-notification-service/pkgUtils/fcm"
 	healthService "latipe-notification-service/pkgUtils/healthcheck"
@@ -35,9 +37,10 @@ import (
 )
 
 type Application struct {
-	fiberApp  *fiber.App
-	grpcApp   *grpc.Server
-	appConfig *config.AppConfig
+	fiberApp   *fiber.App
+	grpcApp    *grpc.Server
+	appConfig  *config.AppConfig
+	notifySubs *notifySubs.NotifyToUserSubs
 }
 
 func (app Application) FiberApp() *fiber.App {
@@ -52,6 +55,10 @@ func (app Application) GRPCServer() *grpc.Server {
 	return app.grpcApp
 }
 
+func (app Application) NotifyToUserSubs() *notifySubs.NotifyToUserSubs {
+	return app.notifySubs
+}
+
 func New() (*Application, error) {
 	panic(wire.Build(wire.NewSet(
 		NewServer,
@@ -62,6 +69,7 @@ func New() (*Application, error) {
 		repositories.Set,
 		service.Set,
 		adapter.Set,
+		subs.Set,
 		handler.Set,
 		middleware.Set,
 		router.Set,
@@ -75,6 +83,8 @@ func NewServer(
 	//grpc service
 	notificationGrpcServ notificationGrpc.NotificationServiceServer,
 	unaryInterceptor *interceptor.GrpcInterceptor,
+	//subs
+	notifySubs *notifySubs.NotifyToUserSubs,
 ) *Application {
 
 	app := fiber.New(fiber.Config{
@@ -157,8 +167,9 @@ func NewServer(
 	notificationGrpc.RegisterNotificationServiceServer(grpcServer, notificationGrpcServ)
 
 	return &Application{
-		appConfig: cfg,
-		fiberApp:  app,
-		grpcApp:   grpcServer,
+		appConfig:  cfg,
+		fiberApp:   app,
+		grpcApp:    grpcServer,
+		notifySubs: notifySubs,
 	}
 }

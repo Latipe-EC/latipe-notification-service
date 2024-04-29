@@ -72,8 +72,8 @@ type RabbitMQ struct {
 	Connection  string
 	ServiceName string
 
-	OrderTransactionExchange string
-	OrderCommitRoutingKey    string
+	NotificationExchange  string
+	SendMessageRoutingKey string
 }
 
 type NotifyEvent struct {

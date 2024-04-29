@@ -46,6 +46,13 @@ func main() {
 
 	wg.Add(1)
 	go func() {
+		if err := serv.NotifyToUserSubs().ListenNotificationMessage(&wg); err != nil {
+			log.Fatalf("Error: %s", err)
+		}
+	}()
+
+	wg.Add(1)
+	go func() {
 		endTime := time.Now()
 		fmt.Printf("\n======== Server initialization completed in %v ========\n", endTime.Sub(startTime))
 		wg.Done()

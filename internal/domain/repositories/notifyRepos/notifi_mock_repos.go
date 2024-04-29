@@ -50,6 +50,20 @@ func (mr *MockNotificationRepositoryMockRecorder) Delete(ctx, entityId interface
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Delete", reflect.TypeOf((*MockNotificationRepository)(nil).Delete), ctx, entityId)
 }
 
+// DeleteManyNotificationOfUser mocks base method.
+func (m *MockNotificationRepository) DeleteManyNotificationOfUser(ctx context.Context, userId string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "DeleteManyNotificationOfUser", ctx, userId)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteManyNotificationOfUser indicates an expected call of DeleteManyNotificationOfUser.
+func (mr *MockNotificationRepositoryMockRecorder) DeleteManyNotificationOfUser(ctx, userId interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteManyNotificationOfUser", reflect.TypeOf((*MockNotificationRepository)(nil).DeleteManyNotificationOfUser), ctx, userId)
+}
+
 // FindByID mocks base method.
 func (m *MockNotificationRepository) FindByID(ctx context.Context, entityID string) (*notication.Notification, error) {
 	m.ctrl.T.Helper()
@@ -66,12 +80,13 @@ func (mr *MockNotificationRepositoryMockRecorder) FindByID(ctx, entityID interfa
 }
 
 // FindByOwnerID mocks base method.
-func (m *MockNotificationRepository) FindByOwnerID(ctx context.Context, OwnerID string, query *pagable.Query) ([]*notication.Notification, error) {
+func (m *MockNotificationRepository) FindByOwnerID(ctx context.Context, OwnerID string, query *pagable.Query) ([]*notication.Notification, int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindByOwnerID", ctx, OwnerID, query)
 	ret0, _ := ret[0].([]*notication.Notification)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(int)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // FindByOwnerID indicates an expected call of FindByOwnerID.
@@ -81,12 +96,13 @@ func (mr *MockNotificationRepositoryMockRecorder) FindByOwnerID(ctx, OwnerID, qu
 }
 
 // FindUnreadMessageOfUser mocks base method.
-func (m *MockNotificationRepository) FindUnreadMessageOfUser(ctx context.Context, OwnerID string, query *pagable.Query) ([]*notication.Notification, error) {
+func (m *MockNotificationRepository) FindUnreadMessageOfUser(ctx context.Context, OwnerID string, query *pagable.Query) ([]*notication.Notification, int, error) {
 	m.ctrl.T.Helper()
 	ret := m.ctrl.Call(m, "FindUnreadMessageOfUser", ctx, OwnerID, query)
 	ret0, _ := ret[0].([]*notication.Notification)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
+	ret1, _ := ret[1].(int)
+	ret2, _ := ret[2].(error)
+	return ret0, ret1, ret2
 }
 
 // FindUnreadMessageOfUser indicates an expected call of FindUnreadMessageOfUser.
@@ -137,4 +153,18 @@ func (m *MockNotificationRepository) Update(ctx context.Context, entity *noticat
 func (mr *MockNotificationRepositoryMockRecorder) Update(ctx, entity interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockNotificationRepository)(nil).Update), ctx, entity)
+}
+
+// UpdateAllReadMessageOfUser mocks base method.
+func (m *MockNotificationRepository) UpdateAllReadMessageOfUser(ctx context.Context, OwnerID string) error {
+	m.ctrl.T.Helper()
+	ret := m.ctrl.Call(m, "UpdateAllReadMessageOfUser", ctx, OwnerID)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateAllReadMessageOfUser indicates an expected call of UpdateAllReadMessageOfUser.
+func (mr *MockNotificationRepositoryMockRecorder) UpdateAllReadMessageOfUser(ctx, OwnerID interface{}) *gomock.Call {
+	mr.mock.ctrl.T.Helper()
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAllReadMessageOfUser", reflect.TypeOf((*MockNotificationRepository)(nil).UpdateAllReadMessageOfUser), ctx, OwnerID)
 }

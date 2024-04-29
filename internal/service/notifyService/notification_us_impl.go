@@ -17,12 +17,12 @@ import (
 type notificationService struct {
 	notificationRepo notifyRepos.NotificationRepository
 	userDeviceRepo   userDeviceRepos.UserDeviceRepository
-	fbCloudMessage   *fcm.FirebaseCloudMessage
+	fbCloudMessage   fcm.NotificationCloudMessage
 }
 
 func NewNotificationService(notificationRepo notifyRepos.NotificationRepository,
 	userDeviceRepo userDeviceRepos.UserDeviceRepository,
-	fbCloudMessage *fcm.FirebaseCloudMessage) NotificationService {
+	fbCloudMessage fcm.NotificationCloudMessage) NotificationService {
 	return &notificationService{
 		notificationRepo: notificationRepo,
 		userDeviceRepo:   userDeviceRepo,
@@ -144,6 +144,9 @@ func (n notificationService) SendNotification(ctx context.Context, req *dto.Send
 		UpdatedAt: time.Now(),
 	}
 
+	if req.Image == "" {
+		noti.Image = "https://res.cloudinary.com/dddb8btv0/image/upload/f_auto,q_auto/v1/latipe/dtzjmllk215rggpznjar"
+	}
 	entity, err := n.notificationRepo.Save(ctx, &noti)
 	if err != nil {
 		return nil, err

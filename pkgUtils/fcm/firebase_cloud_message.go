@@ -12,12 +12,12 @@ import (
 	"time"
 )
 
-type FirebaseCloudMessage struct {
+type firebaseCloudMessage struct {
 	_app    *firebase.App
 	_client *messaging.Client
 }
 
-func NewFirebaseSDK(config *config.AppConfig) *FirebaseCloudMessage {
+func NewFirebaseSDK(config *config.AppConfig) NotificationCloudMessage {
 	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
 	defer cancel()
 
@@ -38,10 +38,10 @@ func NewFirebaseSDK(config *config.AppConfig) *FirebaseCloudMessage {
 		panic("Firebase message service load error")
 	}
 
-	return &FirebaseCloudMessage{_app: app, _client: client}
+	return &firebaseCloudMessage{_app: app, _client: client}
 
 }
-func (fcm *FirebaseCloudMessage) SendToSingleDevice(ctx context.Context, message *messaging.Message) error {
+func (fcm *firebaseCloudMessage) SendToSingleDevice(ctx context.Context, message *messaging.Message) error {
 	response, err := fcm._client.Send(ctx, message)
 	if err != nil {
 		log.Errorf("Error sending message: %s", err)
@@ -51,7 +51,7 @@ func (fcm *FirebaseCloudMessage) SendToSingleDevice(ctx context.Context, message
 	return nil
 }
 
-func (fcm *FirebaseCloudMessage) SendToMultipleDevices(ctx context.Context, message *messaging.MulticastMessage) error {
+func (fcm *firebaseCloudMessage) SendToMultipleDevices(ctx context.Context, message *messaging.MulticastMessage) error {
 	response, err := fcm._client.SendMulticast(ctx, message)
 	if err != nil {
 		log.Errorf("Error sending message: %s", err)
@@ -61,7 +61,7 @@ func (fcm *FirebaseCloudMessage) SendToMultipleDevices(ctx context.Context, mess
 	return nil
 }
 
-func (fcm *FirebaseCloudMessage) SendToTopic(ctx context.Context, message *messaging.Message) error {
+func (fcm *firebaseCloudMessage) SendToTopic(ctx context.Context, message *messaging.Message) error {
 	response, err := fcm._client.Send(ctx, message)
 	if err != nil {
 		log.Errorf("Error sending message: %s", err)
@@ -71,7 +71,7 @@ func (fcm *FirebaseCloudMessage) SendToTopic(ctx context.Context, message *messa
 	return nil
 }
 
-func (fcm *FirebaseCloudMessage) SendToCondition(ctx context.Context, message *messaging.Message) error {
+func (fcm *firebaseCloudMessage) SendToCondition(ctx context.Context, message *messaging.Message) error {
 	response, err := fcm._client.Send(ctx, message)
 	if err != nil {
 		log.Errorf("Error sending message: %s", err)
@@ -81,7 +81,7 @@ func (fcm *FirebaseCloudMessage) SendToCondition(ctx context.Context, message *m
 	return nil
 }
 
-func (fcm *FirebaseCloudMessage) SendToDeviceGroup(ctx context.Context, message *messaging.Message) error {
+func (fcm *firebaseCloudMessage) SendToDeviceGroup(ctx context.Context, message *messaging.Message) error {
 	response, err := fcm._client.Send(ctx, message)
 	if err != nil {
 		log.Errorf("Error sending message: %s", err)
@@ -91,7 +91,7 @@ func (fcm *FirebaseCloudMessage) SendToDeviceGroup(ctx context.Context, message 
 	return nil
 }
 
-func (fcm *FirebaseCloudMessage) SubscribeToTopic(ctx context.Context, registrationTokens []string, topic string) error {
+func (fcm *firebaseCloudMessage) SubscribeToTopic(ctx context.Context, registrationTokens []string, topic string) error {
 	if _, err := fcm._client.SubscribeToTopic(ctx, registrationTokens, topic); err != nil {
 		log.Errorf("Error subscribing to topic: %s", err)
 	}
@@ -100,7 +100,7 @@ func (fcm *FirebaseCloudMessage) SubscribeToTopic(ctx context.Context, registrat
 	return nil
 }
 
-func (fcm *FirebaseCloudMessage) UnsubscribeFromTopic(ctx context.Context, registrationTokens []string, topic string) error {
+func (fcm *firebaseCloudMessage) UnsubscribeFromTopic(ctx context.Context, registrationTokens []string, topic string) error {
 	if _, err := fcm._client.UnsubscribeFromTopic(ctx, registrationTokens, topic); err != nil {
 		log.Errorf("Error unsubscribing from topic: %s", err)
 	}

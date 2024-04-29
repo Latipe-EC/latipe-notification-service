@@ -28,9 +28,11 @@ import (
 	"latipe-notification-service/internal/middleware"
 	"latipe-notification-service/internal/router/notifyRouter"
 	"latipe-notification-service/internal/service/notifyService"
+	"latipe-notification-service/internal/subs/notifySubs"
 	"latipe-notification-service/pkgUtils/db/mongodb"
 	"latipe-notification-service/pkgUtils/fcm"
 	"latipe-notification-service/pkgUtils/healthcheck"
+	"latipe-notification-service/pkgUtils/rabbitclient"
 	"latipe-notification-service/pkgUtils/util/response"
 )
 
@@ -47,24 +49,27 @@ func New() (*Application, error) {
 	}
 	notificationRepository := notifyRepos.NewNotificationRepository(mongoClient)
 	userDeviceRepository := userDeviceRepos.NewUserDeviceRepository(mongoClient)
-	firebaseCloudMessage := fcm.NewFirebaseSDK(appConfig)
-	notificationService := notifyService.NewNotificationService(notificationRepository, userDeviceRepository, firebaseCloudMessage)
+	notificationCloudMessage := fcm.NewFirebaseSDK(appConfig)
+	notificationService := notifyService.NewNotificationService(notificationRepository, userDeviceRepository, notificationCloudMessage)
 	notifyHandlerNotifyHandler := notifyHandler.NewNotifyHandler(notificationService)
 	authService := authserv.NewAuthService(appConfig)
 	authMiddleware := middleware.NewAuthMiddleware(authService, appConfig)
 	notificationRouter := notifyRouter.NewNotificationRouter(notifyHandlerNotifyHandler, authMiddleware)
 	notificationServiceServer := notificationGrpc.NewNotificationGrpcServer(notificationService)
 	grpcInterceptor := interceptor.NewGrpcInterceptor(appConfig)
-	application := NewServer(appConfig, notificationRouter, notificationServiceServer, grpcInterceptor)
+	connection := rabbitclient.NewRabbitClientConnection(appConfig)
+	notifyToUserSubs := notifySubs.NewNotifyToUserSubs(appConfig, connection, notificationService)
+	application := NewServer(appConfig, notificationRouter, notificationServiceServer, grpcInterceptor, notifyToUserSubs)
 	return application, nil
 }
 
 // server.go:
 
 type Application struct {
-	fiberApp  *fiber.App
-	grpcApp   *grpc.Server
-	appConfig *config.AppConfig
+	fiberApp   *fiber.App
+	grpcApp    *grpc.Server
+	appConfig  *config.AppConfig
+	notifySubs *notifySubs.NotifyToUserSubs
 }
 
 func (app Application) FiberApp() *fiber.App {
@@ -79,11 +84,15 @@ func (app Application) GRPCServer() *grpc.Server {
 	return app.grpcApp
 }
 
+func (app Application) NotifyToUserSubs() *notifySubs.NotifyToUserSubs {
+	return app.notifySubs
+}
+
 func NewServer(
 	cfg *config.AppConfig, notifyRouter2 notifyRouter.NotificationRouter,
 
 	notificationGrpcServ notificationGrpc.NotificationServiceServer,
-	unaryInterceptor *interceptor.GrpcInterceptor,
+	unaryInterceptor *interceptor.GrpcInterceptor, notifySubs2 *notifySubs.NotifyToUserSubs,
 ) *Application {
 
 	app := fiber.New(fiber.Config{
@@ -160,8 +169,9 @@ func NewServer(
 	notificationGrpc.RegisterNotificationServiceServer(grpcServer, notificationGrpcServ)
 
 	return &Application{
-		appConfig: cfg,
-		fiberApp:  app,
-		grpcApp:   grpcServer,
+		appConfig:  cfg,
+		fiberApp:   app,
+		grpcApp:    grpcServer,
+		notifySubs: notifySubs2,
 	}
 }
