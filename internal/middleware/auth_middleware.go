@@ -41,9 +41,11 @@ func (auth AuthMiddleware) RequiredRoles(roles []string, option ...int) fiber.Ha
 
 		for _, i := range roles {
 			if i == resp.Role {
+				ctx.Locals(USER_ID, resp.Id)
 				return ctx.Next()
 			}
 		}
+
 		return errorUtils.ErrPermissionDenied
 	}
 }

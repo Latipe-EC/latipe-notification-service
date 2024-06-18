@@ -1,9 +1,11 @@
 package notifyHandler
 
 import (
+	"errors"
 	"fmt"
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/log"
+	"go.mongodb.org/mongo-driver/mongo"
 	"latipe-notification-service/internal/domain/dto"
 	"latipe-notification-service/internal/middleware"
 	"latipe-notification-service/internal/service/notifyService"
@@ -62,6 +64,10 @@ func (n notifyHandler) GetNotificationDetail(ctx *fiber.Ctx) error {
 
 	data, err := n.notifyService.GetNotificationDetail(context, &req)
 	if err != nil {
+		switch {
+		case errors.Is(err, mongo.ErrNoDocuments):
+			return errorUtils.ErrNotFound
+		}
 		return errorUtils.ErrInternalServer
 	}
 
@@ -104,11 +110,21 @@ func (n notifyHandler) SendCampaignNotification(ctx *fiber.Ctx) error {
 	}
 
 	if err := valid.GetValidator().Validate(&req); err != nil {
+		log.Error(err)
 		return errorUtils.ErrInvalidParameters
 	}
 
-	data, err := n.notifyService.SendCampaignNotification(context, &req)
+	data, err := n.notifyService.SendCampaignInternalService(context, &req)
 	if err != nil {
+		switch {
+		case errors.Is(err, errorUtils.ErrParseDatetimeParameters):
+			return errorUtils.ErrParseDatetimeParameters
+		case errors.Is(err, errorUtils.ErrInvalidParameters):
+			return errorUtils.ErrInvalidParameters
+		case errors.Is(err, errorUtils.ErrInvalidDatetimeParameters):
+			return errorUtils.ErrInvalidDatetimeParameters
+		}
+
 		return errorUtils.ErrInternalServer
 	}
 
@@ -210,6 +226,94 @@ func (n notifyHandler) RegisterNewUserDevice(ctx *fiber.Ctx) error {
 
 	response := responses.DefaultSuccess
 	response.Data = data
+
+	return response.JSON(ctx)
+}
+
+func (n notifyHandler) AdminGetAllCampaigns(ctx *fiber.Ctx) error {
+	context := ctx.Context()
+
+	query, err := pagable.GetQueryFromFiberCtx(ctx)
+	if err != nil {
+		return errorUtils.ErrInvalidParameters
+	}
+
+	req := dto.AdminGetAllCampaignRequest{
+		Query: query,
+	}
+
+	if err := valid.GetValidator().Validate(&req); err != nil {
+		return errorUtils.ErrInvalidParameters
+	}
+
+	data, err := n.notifyService.AdminGetAllCampaigns(context, &req)
+	if err != nil {
+		return errorUtils.ErrInternalServer
+	}
+
+	response := responses.DefaultSuccess
+	response.Data = data
+
+	return response.JSON(ctx)
+}
+
+func (n notifyHandler) AdminCreateCampaign(ctx *fiber.Ctx) error {
+	context := ctx.Context()
+
+	req := dto.AdminCreateCampaignRequest{}
+	if err := ctx.BodyParser(&req); err != nil {
+		log.Error(err)
+		return errorUtils.ErrInvalidParameters
+	}
+
+	userId := fmt.Sprintf("%s", ctx.Locals(middleware.USER_ID))
+	if userId == "" {
+		return errorUtils.ErrUnauthenticated
+	}
+	req.UserID = userId
+
+	if err := valid.GetValidator().Validate(&req); err != nil {
+		return errorUtils.ErrInvalidParameters
+	}
+
+	_, err := n.notifyService.AdminCreateCampaign(context, &req)
+	if err != nil {
+		switch {
+		case errors.Is(err, errorUtils.ErrParseDatetimeParameters):
+			return errorUtils.ErrParseDatetimeParameters
+		case errors.Is(err, errorUtils.ErrInvalidParameters):
+			return errorUtils.ErrInvalidParameters
+		case errors.Is(err, errorUtils.ErrInvalidDatetimeParameters):
+			return errorUtils.ErrInvalidDatetimeParameters
+		}
+
+		return errorUtils.ErrInternalServer
+	}
+
+	response := responses.DefaultSuccess
+
+	return response.JSON(ctx)
+}
+
+func (n notifyHandler) AdminRecallCampaign(ctx *fiber.Ctx) error {
+	context := ctx.Context()
+
+	req := dto.RecallNotificationRequest{}
+	if err := ctx.BodyParser(&req); err != nil {
+		log.Error(err)
+		return errorUtils.ErrInvalidParameters
+	}
+
+	if err := valid.GetValidator().Validate(&req); err != nil {
+		return errorUtils.ErrInvalidParameters
+	}
+
+	_, err := n.notifyService.AdminRecallCampaign(context, &req)
+	if err != nil {
+		return errorUtils.ErrInternalServer
+	}
+
+	response := responses.DefaultSuccess
 
 	return response.JSON(ctx)
 }

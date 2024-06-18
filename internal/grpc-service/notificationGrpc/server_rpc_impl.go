@@ -53,7 +53,7 @@ func (n notificationGrpcServer) SendCampaign(ctx context.Context, request *Creat
 		return nil, status.Error(codes.InvalidArgument, fmt.Sprint(err))
 	}
 
-	data, err := n.notifyService.SendCampaignNotification(ctx, &dto)
+	data, err := n.notifyService.SendCampaignInternalService(ctx, &dto)
 	if err != nil {
 		return nil, status.Error(codes.Internal, fmt.Sprint(err))
 	}

@@ -33,13 +33,13 @@ func TestNotificationService_GetNotificationsOfUser(t *testing.T) {
 
 	dataResp := []*notication.Notification{
 		{
-			ID:     primitive.NewObjectIDFromTimestamp(time.Now()),
-			Owner:  "123",
-			Title:  "Xin chào mừng bạn đã đến với Latipe",
-			Image:  "https://latipe.com.vn/assets/images/logo.png",
-			Body:   "Xin chào mừng bạn đã đến với Latipe",
-			Type:   1,
-			UnRead: true,
+			ID:      primitive.NewObjectIDFromTimestamp(time.Now()),
+			OwnerID: "123",
+			Title:   "Xin chào mừng bạn đã đến với Latipe",
+			Image:   "https://latipe.com.vn/assets/images/logo.png",
+			Body:    "Xin chào mừng bạn đã đến với Latipe",
+			Type:    1,
+			UnRead:  true,
 		},
 	}
 

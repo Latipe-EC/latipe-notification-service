@@ -38,4 +38,9 @@ func (n notificationRouter) Init(root *fiber.Router) {
 	internal.Post("/notify-message", n.notifyHandler.SendNotification)
 	internal.Post("/notify-campaign", n.notifyHandler.SendCampaignNotification)
 
+	//admin services
+	admin := notify.Group("/admin", n.authMiddleware.RequiredRoles([]string{middleware.ADMIN_ROLE}))
+	admin.Post("/notify-campaign", n.notifyHandler.AdminCreateCampaign)
+	admin.Delete("/notify-campaign", n.notifyHandler.AdminRecallCampaign)
+	admin.Get("/notify-campaign", n.notifyHandler.AdminGetAllCampaigns)
 }

@@ -1,3 +1,4 @@
 /.idea
 /config/firebase-service-account.json
 /config/devConfig.yml
+/build/*

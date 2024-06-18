@@ -7,11 +7,9 @@ import (
 	"net"
 	"runtime"
 	"sync"
-	"time"
 )
 
 func main() {
-	startTime := time.Now()
 	fmt.Println("\n======== Starting server initialization ========")
 	numCPU := runtime.NumCPU()
 	fmt.Printf("Number of CPU cores: %d\n", numCPU)
@@ -31,7 +29,7 @@ func main() {
 	}()
 
 	wg.Add(1)
-	go func() {
+	go runWithRecovery(func() {
 		defer wg.Done()
 		log.Infof("Start grpc server on port: localhost%v", serv.AppConfig().Server.GrpcPort)
 		lis, err := net.Listen("tcp", serv.AppConfig().Server.GrpcPort)
@@ -42,21 +40,25 @@ func main() {
 		if err := serv.GRPCServer().Serve(lis); err != nil {
 			log.Infof("%s", err)
 		}
-	}()
+	})
 
 	wg.Add(1)
-	go func() {
+	go runWithRecovery(func() {
 		if err := serv.NotifyToUserSubs().ListenNotificationMessage(&wg); err != nil {
 			log.Fatalf("Error: %s", err)
 		}
-	}()
-
-	wg.Add(1)
-	go func() {
-		endTime := time.Now()
-		fmt.Printf("\n======== Server initialization completed in %v ========\n", endTime.Sub(startTime))
-		wg.Done()
-	}()
+	})
 
 	wg.Wait()
+}
+
+func runWithRecovery(fn func()) {
+	go func() {
+		defer func() {
+			if r := recover(); r != nil {
+				log.Debugf("Recovered from panic: %v", r)
+			}
+		}()
+		fn()
+	}()
 }

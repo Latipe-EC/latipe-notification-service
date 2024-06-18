@@ -27,7 +27,7 @@ func (n notificationRepository) FindByID(ctx context.Context, entityID string) (
 
 	id, _ := primitive.ObjectIDFromHex(entityID)
 
-	err := n._notiCol.FindOne(ctx, bson.M{"_id": id}).Decode(&entity)
+	err := n._notiCol.FindOne(ctx, bson.M{"_id": id, "is_active": true}).Decode(&entity)
 	if err != nil {
 		return nil, err
 	}
@@ -39,7 +39,7 @@ func (n notificationRepository) FindByOwnerID(ctx context.Context, OwnerID strin
 	var entities []*notication.Notification
 
 	opts := options.Find().SetLimit(int64(query.GetLimit())).SetSkip(int64(query.GetOffset()))
-	filter := bson.M{"owner_id": OwnerID}
+	filter := bson.M{"owner_id": OwnerID, "is_active": true}
 
 	cursor, err := n._notiCol.Find(ctx, filter, opts)
 	if err != nil {
@@ -63,7 +63,7 @@ func (n notificationRepository) FindUnreadMessageOfUser(ctx context.Context, Own
 	var entities []*notication.Notification
 
 	opts := options.Find().SetLimit(int64(query.GetLimit())).SetSkip(int64(query.GetOffset()))
-	filter := bson.M{"owner_id": bson.M{"$in": []string{OwnerID, "all"}}, "unread": true}
+	filter := bson.M{"owner_id": bson.M{"$in": []string{OwnerID, "all"}}, "unread": true, "is_active": true}
 
 	cursor, err := n._notiCol.Find(ctx, filter, opts)
 	if err != nil {
@@ -85,7 +85,7 @@ func (n notificationRepository) FindUnreadMessageOfUser(ctx context.Context, Own
 }
 
 func (n notificationRepository) TotalUnreadMessageOfUser(ctx context.Context, OwnerID string) (int64, error) {
-	filter := bson.M{"owner_id": OwnerID, "unread": true}
+	filter := bson.M{"owner_id": OwnerID, "unread": true, "is_active": true}
 	total, err := n._notiCol.CountDocuments(ctx, filter)
 	if err != nil {
 		return 0, err
@@ -95,6 +95,7 @@ func (n notificationRepository) TotalUnreadMessageOfUser(ctx context.Context, Ow
 }
 
 func (n notificationRepository) Save(ctx context.Context, entity *notication.Notification) (*notication.Notification, error) {
+	entity.IsActive = true
 	_, err := n._notiCol.InsertOne(ctx, entity)
 	if err != nil {
 		return nil, err
@@ -103,7 +104,7 @@ func (n notificationRepository) Save(ctx context.Context, entity *notication.Not
 	return entity, nil
 }
 
-func (n notificationRepository) Update(ctx context.Context, entity *notication.Notification) error {
+func (n notificationRepository) UpdateReadStatusNotification(ctx context.Context, entity *notication.Notification) error {
 	filter := bson.D{{"_id", entity.ID}}
 
 	update := bson.D{
@@ -143,6 +144,51 @@ func (n notificationRepository) DeleteManyNotificationOfUser(ctx context.Context
 
 func (n notificationRepository) UpdateAllReadMessageOfUser(ctx context.Context, OwnerID string) error {
 	_, err := n._notiCol.UpdateMany(ctx, bson.M{"owner_id": OwnerID, "unread": true}, bson.M{"$set": bson.M{"unread": false}})
+	if err != nil {
+		log.Error(err)
+		return err
+	}
+
+	return nil
+}
+
+func (n notificationRepository) FindAllCampaigns(ctx context.Context, query *pagable.Query) ([]*notication.Notification, int, error) {
+	var entities []*notication.Notification
+
+	opts := options.Find().SetLimit(int64(query.GetLimit())).SetSkip(int64(query.GetOffset()))
+	filter := bson.M{"type": notication.NOTIFY_CAMPAIGN}
+
+	cursor, err := n._notiCol.Find(ctx, filter, opts)
+	if err != nil {
+		log.Error(err)
+		return nil, 0, err
+	}
+
+	if err = cursor.All(ctx, &entities); err != nil {
+		log.Error(err)
+		return nil, 0, err
+	}
+
+	total, err := n._notiCol.CountDocuments(ctx, filter)
+	if err != nil {
+		return nil, 0, err
+	}
+
+	return entities, int(total), nil
+}
+
+func (n notificationRepository) RecallCampaign(ctx context.Context, entity *notication.Notification) error {
+	filter := bson.M{"_id": entity.ID}
+
+	update := bson.M{
+		"$set": bson.M{
+			"is_active":     false,
+			"recall_reason": entity.RecallReason,
+			"updated_at":    time.Now(),
+		},
+	}
+
+	_, err := n._notiCol.UpdateOne(ctx, filter, update)
 	if err != nil {
 		log.Error(err)
 		return err

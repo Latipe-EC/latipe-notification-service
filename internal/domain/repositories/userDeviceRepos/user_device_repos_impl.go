@@ -78,7 +78,7 @@ func (u userDeviceRepository) Update(ctx context.Context, entity *userDevice.Use
 }
 
 func (u userDeviceRepository) GetAllActiveDeviceToken(ctx context.Context) ([]string, error) {
-	tokens, err := u._deviceCol.Distinct(ctx, "device_token", bson.M{"unread": true, "is_active": true})
+	tokens, err := u._deviceCol.Distinct(ctx, "device_token", bson.M{"is_active": true})
 	if err != nil {
 		log.Error(err)
 		return nil, err
@@ -89,5 +89,5 @@ func (u userDeviceRepository) GetAllActiveDeviceToken(ctx context.Context) ([]st
 		deviceTokens = append(deviceTokens, token.(string))
 	}
 
-	return nil, err
+	return deviceTokens, nil
 }

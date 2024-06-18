@@ -68,4 +68,16 @@ var (
 		ErrorCode: "GE011",
 		Message:   "Invalid filters",
 	}
+
+	ErrInvalidDatetimeParameters = &responses.Error{
+		Code:      400,
+		ErrorCode: "GE012",
+		Message:   "Invalid datetime parameters (may be start date is after end date or before current date)",
+	}
+
+	ErrParseDatetimeParameters = &responses.Error{
+		Code:      400,
+		ErrorCode: "GE013",
+		Message:   "Failed to parse datetime parameters with the given layout (yyyy-MM-dd HH:mm:ss)",
+	}
 )

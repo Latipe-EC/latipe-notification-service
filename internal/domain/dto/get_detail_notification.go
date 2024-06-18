@@ -6,12 +6,14 @@ type GetNotificationDetailRequest struct {
 
 type NotificationDetailResponse struct {
 	ID        string `json:"id"`
-	OwnerID   string `json:"owner_id,omitempty"`
-	Title     string `json:"title,omitempty"`
-	Message   string `json:"message,omitempty"`
-	IsRead    bool   `json:"is_read,omitempty"`
-	CreatedAt string `json:"created_at,omitempty"`
-	UpdatedAt string `json:"updated_at,omitempty"`
+	OwnerID   string `json:"owner_id"`
+	Title     string `json:"title"`
+	Image     string `json:"image"`
+	Body      string `json:"body"`
+	Type      int    `json:"type"`
+	UnRead    bool   `json:"unread"`
+	CreatedAt string `json:"created_at"`
+	UpdatedAt string `json:"updated_at"`
 }
 
 type GetNotificationDetailResponse struct {

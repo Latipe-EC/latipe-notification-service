@@ -16,6 +16,10 @@ func (e *Error) Error() string {
 	return e.Message
 }
 
+func (e *Error) SetMessageError(message string) {
+	e.Message = message
+}
+
 func Is(err, target error) bool {
 	return errors.Is(err, target)
 }

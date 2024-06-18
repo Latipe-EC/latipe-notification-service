@@ -13,9 +13,13 @@ type NotifyHandler interface {
 	GetNotificationDetail(ctx *fiber.Ctx) error
 	TotalUnreadNotification(ctx *fiber.Ctx) error
 	SendCampaignNotification(ctx *fiber.Ctx) error
+	AdminGetAllCampaigns(ctx *fiber.Ctx) error
+
 	// commands
 	RegisterNewUserDevice(ctx *fiber.Ctx) error
 	SendNotification(ctx *fiber.Ctx) error
 	MarkAllRead(ctx *fiber.Ctx) error
 	ClearAllNotification(ctx *fiber.Ctx) error
+	AdminCreateCampaign(ctx *fiber.Ctx) error
+	AdminRecallCampaign(ctx *fiber.Ctx) error
 }

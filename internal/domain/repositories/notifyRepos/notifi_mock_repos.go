@@ -144,7 +144,7 @@ func (mr *MockNotificationRepositoryMockRecorder) TotalUnreadMessageOfUser(ctx, 
 // Update mocks base method.
 func (m *MockNotificationRepository) Update(ctx context.Context, entity *notication.Notification) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", ctx, entity)
+	ret := m.ctrl.Call(m, "UpdateReadStatusNotification", ctx, entity)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
@@ -152,7 +152,7 @@ func (m *MockNotificationRepository) Update(ctx context.Context, entity *noticat
 // Update indicates an expected call of Update.
 func (mr *MockNotificationRepositoryMockRecorder) Update(ctx, entity interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockNotificationRepository)(nil).Update), ctx, entity)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateReadStatusNotification", reflect.TypeOf((*MockNotificationRepository)(nil).Update), ctx, entity)
 }
 
 // UpdateAllReadMessageOfUser mocks base method.

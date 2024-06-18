@@ -113,7 +113,7 @@ func (mr *MockUserDeviceRepositoryMockRecorder) Save(ctx, entity interface{}) *g
 // Update mocks base method.
 func (m *MockUserDeviceRepository) Update(ctx context.Context, entity *userDevice.UserDevice) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "Update", ctx, entity)
+	ret := m.ctrl.Call(m, "UpdateReadStatusNotification", ctx, entity)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
@@ -121,5 +121,5 @@ func (m *MockUserDeviceRepository) Update(ctx context.Context, entity *userDevic
 // Update indicates an expected call of Update.
 func (mr *MockUserDeviceRepositoryMockRecorder) Update(ctx, entity interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Update", reflect.TypeOf((*MockUserDeviceRepository)(nil).Update), ctx, entity)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateReadStatusNotification", reflect.TypeOf((*MockUserDeviceRepository)(nil).Update), ctx, entity)
 }

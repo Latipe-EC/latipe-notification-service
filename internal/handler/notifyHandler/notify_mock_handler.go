@@ -93,7 +93,7 @@ func (mr *MockNotifyHandlerMockRecorder) MarkAsRead(ctx interface{}) *gomock.Cal
 // SendCampaignNotification mocks base method.
 func (m *MockNotifyHandler) SendCampaignNotification(ctx *fiber.Ctx) error {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "SendCampaignNotification", ctx)
+	ret := m.ctrl.Call(m, "SendCampaignInternalService", ctx)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
@@ -101,7 +101,7 @@ func (m *MockNotifyHandler) SendCampaignNotification(ctx *fiber.Ctx) error {
 // SendCampaignNotification indicates an expected call of SendCampaignNotification.
 func (mr *MockNotifyHandlerMockRecorder) SendCampaignNotification(ctx interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCampaignNotification", reflect.TypeOf((*MockNotifyHandler)(nil).SendCampaignNotification), ctx)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SendCampaignInternalService", reflect.TypeOf((*MockNotifyHandler)(nil).SendCampaignNotification), ctx)
 }
 
 // SendNotification mocks base method.
