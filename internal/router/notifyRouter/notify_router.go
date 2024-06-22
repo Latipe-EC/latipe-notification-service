@@ -2,6 +2,7 @@ package notifyRouter
 
 import (
 	"github.com/gofiber/fiber/v2"
+	"latipe-notification-service/internal/handler/notificationHookHandler"
 	"latipe-notification-service/internal/handler/notifyHandler"
 	"latipe-notification-service/internal/middleware"
 )
@@ -11,14 +12,18 @@ type NotificationRouter interface {
 }
 
 type notificationRouter struct {
-	notifyHandler  notifyHandler.NotifyHandler
-	authMiddleware *middleware.AuthMiddleware
+	notifyHandler   notifyHandler.NotifyHandler
+	notiHookHandler notificationHookHandler.NotificationHookHandler
+	authMiddleware  *middleware.AuthMiddleware
 }
 
-func NewNotificationRouter(notifyHandler notifyHandler.NotifyHandler, authMiddleware *middleware.AuthMiddleware) NotificationRouter {
+func NewNotificationRouter(notifyHandler notifyHandler.NotifyHandler,
+	notiHookHandler notificationHookHandler.NotificationHookHandler,
+	authMiddleware *middleware.AuthMiddleware) NotificationRouter {
 	return &notificationRouter{
-		notifyHandler:  notifyHandler,
-		authMiddleware: authMiddleware,
+		notifyHandler:   notifyHandler,
+		notiHookHandler: notiHookHandler,
+		authMiddleware:  authMiddleware,
 	}
 }
 
@@ -43,4 +48,8 @@ func (n notificationRouter) Init(root *fiber.Router) {
 	admin.Post("/notify-campaign", n.notifyHandler.AdminCreateCampaign)
 	admin.Delete("/notify-campaign", n.notifyHandler.AdminRecallCampaign)
 	admin.Get("/notify-campaign", n.notifyHandler.AdminGetAllCampaigns)
+
+	//notification hook
+	notifyHook := notify.Group("/schedule", n.authMiddleware.RequiredAPIKeyHeader())
+	notifyHook.Post("/callback", n.notiHookHandler.HandleScheduleCallback)
 }

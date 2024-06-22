@@ -6,7 +6,7 @@ import (
 	"github.com/go-resty/resty/v2"
 	"github.com/gofiber/fiber/v2/log"
 	"latipe-notification-service/config"
-	"latipe-notification-service/internal/adapter/authserv/dto"
+	"latipe-notification-service/internal/infrastructure/adapter/authserv/dto"
 )
 
 type AuthService struct {

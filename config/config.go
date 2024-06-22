@@ -3,13 +3,14 @@ package config
 import "time"
 
 type AppConfig struct {
-	Server         Server
-	GRPC           GRPC
-	DB             DB
-	Cache          Cache
-	RabbitMQ       RabbitMQ
-	AdapterService AdapterService
-	Firebase       Firebase
+	Server             Server
+	GRPC               GRPC
+	DB                 DB
+	Cache              Cache
+	RabbitMQ           RabbitMQ
+	AdapterService     AdapterService
+	GrpcInfrastructure GrpcInfrastructure
+	Firebase           Firebase
 }
 
 type Server struct {
@@ -91,4 +92,15 @@ type AuthService struct {
 type UserService struct {
 	UserURL     string
 	InternalKey string
+}
+
+type GrpcInfrastructure struct {
+	ScheduleGRPC ScheduleGRPC
+}
+
+type ScheduleGRPC struct {
+	Connection        string
+	CallbackURL       string
+	CallbackHeaderKey string
+	APIGrpcKey        string
 }

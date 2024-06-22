@@ -30,3 +30,7 @@ func NewNotification() Notification {
 		UpdatedAt: time.Now(),
 	}
 }
+
+func (n Notification) ParseScheduleDateToString() string {
+	return n.ScheduleDisplay.Format("2006-01-02 15:04:05")
+}

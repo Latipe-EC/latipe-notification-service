@@ -3,8 +3,8 @@ package middleware
 import (
 	"github.com/gofiber/fiber/v2"
 	"latipe-notification-service/config"
-	"latipe-notification-service/internal/adapter/authserv"
-	"latipe-notification-service/internal/adapter/authserv/dto"
+	"latipe-notification-service/internal/infrastructure/adapter/authserv"
+	"latipe-notification-service/internal/infrastructure/adapter/authserv/dto"
 	"latipe-notification-service/pkgUtils/util/errorUtils"
 	"strings"
 )

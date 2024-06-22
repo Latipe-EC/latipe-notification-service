@@ -18,12 +18,13 @@ import (
 	"github.com/hellofresh/health-go/v5"
 	"google.golang.org/grpc"
 	"latipe-notification-service/config"
-	"latipe-notification-service/internal/adapter"
 	"latipe-notification-service/internal/domain/repositories"
 	grpc_service "latipe-notification-service/internal/grpc-service"
 	"latipe-notification-service/internal/grpc-service/interceptor"
 	"latipe-notification-service/internal/grpc-service/notificationGrpc"
 	"latipe-notification-service/internal/handler"
+	"latipe-notification-service/internal/infrastructure/adapter"
+	"latipe-notification-service/internal/infrastructure/grpcExt"
 	"latipe-notification-service/internal/middleware"
 	"latipe-notification-service/internal/router"
 	"latipe-notification-service/internal/router/notifyRouter"
@@ -68,8 +69,9 @@ func New() (*Application, error) {
 		fcm.Set,
 		rabbitclient.Set,
 		repositories.Set,
-		service.Set,
 		adapter.Set,
+		grpcExt.Set,
+		service.Set,
 		subs.Set,
 		handler.Set,
 		middleware.Set,

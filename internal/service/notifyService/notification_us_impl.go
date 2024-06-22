@@ -4,11 +4,13 @@ import (
 	"context"
 	"firebase.google.com/go/messaging"
 	"github.com/gofiber/fiber/v2/log"
+	"latipe-notification-service/config"
 	"latipe-notification-service/internal/domain/dto"
 	"latipe-notification-service/internal/domain/entities/notication"
 	userDevice "latipe-notification-service/internal/domain/entities/userDevice"
 	"latipe-notification-service/internal/domain/repositories/notifyRepos"
 	"latipe-notification-service/internal/domain/repositories/userDeviceRepos"
+	"latipe-notification-service/internal/infrastructure/grpcExt/scheduleGrpc"
 	"latipe-notification-service/internal/service/utils"
 	"latipe-notification-service/pkgUtils/fcm"
 	"latipe-notification-service/pkgUtils/util/errorUtils"
@@ -17,18 +19,22 @@ import (
 )
 
 type notificationService struct {
+	config           *config.AppConfig
 	notificationRepo notifyRepos.NotificationRepository
 	userDeviceRepo   userDeviceRepos.UserDeviceRepository
 	fbCloudMessage   fcm.NotificationCloudMessage
+	scheduleGrpc     scheduleGrpc.ScheduleServiceClient
 }
 
-func NewNotificationService(notificationRepo notifyRepos.NotificationRepository,
+func NewNotificationService(config *config.AppConfig, notificationRepo notifyRepos.NotificationRepository,
 	userDeviceRepo userDeviceRepos.UserDeviceRepository,
-	fbCloudMessage fcm.NotificationCloudMessage) NotificationService {
+	fbCloudMessage fcm.NotificationCloudMessage, scheduleGrpc scheduleGrpc.ScheduleServiceClient) NotificationService {
 	return &notificationService{
+		config:           config,
 		notificationRepo: notificationRepo,
 		userDeviceRepo:   userDeviceRepo,
 		fbCloudMessage:   fbCloudMessage,
+		scheduleGrpc:     scheduleGrpc,
 	}
 }
 
@@ -95,7 +101,7 @@ func (n notificationService) SendCampaignInternalService(ctx context.Context, re
 		return nil, errorUtils.ErrParseDatetimeParameters
 	}
 
-	if !schedule.Before(time.Now()) {
+	if schedule.After(time.Now().Add(15 * time.Minute)) {
 		noti := notication.NewNotification()
 
 		noti.OwnerID = "all"
@@ -108,12 +114,12 @@ func (n notificationService) SendCampaignInternalService(ctx context.Context, re
 		noti.CreatedBy = "INTERNAL_SERVICE"
 		noti.ScheduleDisplay = schedule
 
-		_, err := n.notificationRepo.Save(ctx, &noti)
+		insertedNoti, err := n.notificationRepo.Save(ctx, &noti)
 		if err != nil {
 			return nil, err
 		}
 
-		if err := n.sendCampaignToAllDevice(ctx, req.CampaignTopic, &noti); err != nil {
+		if err := n.sendCampaignToAllDevice(ctx, insertedNoti); err != nil {
 			return nil, err
 		}
 
@@ -248,7 +254,7 @@ func (n notificationService) AdminCreateCampaign(ctx context.Context, req *dto.A
 		return nil, errorUtils.ErrParseDatetimeParameters
 	}
 
-	if !schedule.Before(time.Now()) {
+	if schedule.After(time.Now().Add(15 * time.Minute)) {
 		noti := notication.NewNotification()
 		noti.OwnerID = "all"
 		noti.CampaignTopic = req.CampaignTopic
@@ -259,12 +265,12 @@ func (n notificationService) AdminCreateCampaign(ctx context.Context, req *dto.A
 		noti.CreatedBy = req.UserID
 		noti.ScheduleDisplay = schedule
 
-		_, err := n.notificationRepo.Save(ctx, &noti)
+		insertedNoti, err := n.notificationRepo.Save(ctx, &noti)
 		if err != nil {
 			return nil, err
 		}
 
-		if err := n.sendCampaignToAllDevice(ctx, req.CampaignTopic, &noti); err != nil {
+		if err := n.sendCampaignToAllDevice(ctx, insertedNoti); err != nil {
 			return nil, err
 		}
 
@@ -292,37 +298,4 @@ func (n notificationService) AdminRecallCampaign(ctx context.Context, req *dto.R
 	}
 
 	return nil, errorUtils.ErrInvalidParameters
-}
-
-func (n notificationService) sendCampaignToAllDevice(ctx context.Context, campaignTopic string,
-	noti *notication.Notification) error {
-
-	deviceTokens, err := n.userDeviceRepo.GetAllActiveDeviceToken(ctx)
-	if err != nil {
-		return err
-	}
-
-	if len(deviceTokens) != 0 {
-		if err := n.fbCloudMessage.SubscribeToTopic(ctx, deviceTokens, campaignTopic); err != nil {
-			return err
-		}
-
-		message := messaging.Message{
-			Notification: &messaging.Notification{
-				Title:    noti.Title,
-				Body:     noti.Body,
-				ImageURL: noti.Image,
-			},
-			Topic: campaignTopic,
-		}
-
-		if err := n.fbCloudMessage.SendToTopic(ctx, &message); err != nil {
-			return err
-		}
-
-		if err := n.fbCloudMessage.UnsubscribeFromTopic(ctx, deviceTokens, campaignTopic); err != nil {
-			return err
-		}
-	}
-	return nil
 }

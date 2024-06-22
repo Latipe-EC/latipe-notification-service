@@ -20,14 +20,17 @@ import (
 	"github.com/hellofresh/health-go/v5"
 	"google.golang.org/grpc"
 	"latipe-notification-service/config"
-	"latipe-notification-service/internal/adapter/authserv"
 	"latipe-notification-service/internal/domain/repositories/notifyRepos"
 	"latipe-notification-service/internal/domain/repositories/userDeviceRepos"
 	"latipe-notification-service/internal/grpc-service/interceptor"
 	"latipe-notification-service/internal/grpc-service/notificationGrpc"
+	"latipe-notification-service/internal/handler/notificationHookHandler"
 	"latipe-notification-service/internal/handler/notifyHandler"
+	"latipe-notification-service/internal/infrastructure/adapter/authserv"
+	"latipe-notification-service/internal/infrastructure/grpcExt/scheduleGrpc"
 	"latipe-notification-service/internal/middleware"
 	"latipe-notification-service/internal/router/notifyRouter"
+	"latipe-notification-service/internal/service/notifyHookService"
 	"latipe-notification-service/internal/service/notifyService"
 	"latipe-notification-service/internal/subs/notifySubs"
 	"latipe-notification-service/pkgUtils/db/mongodb"
@@ -51,11 +54,14 @@ func New() (*Application, error) {
 	notificationRepository := notifyRepos.NewNotificationRepository(mongoClient)
 	userDeviceRepository := userDeviceRepos.NewUserDeviceRepository(mongoClient)
 	notificationCloudMessage := fcm.NewFirebaseSDK(appConfig)
-	notificationService := notifyService.NewNotificationService(notificationRepository, userDeviceRepository, notificationCloudMessage)
+	scheduleServiceClient := scheduleGrpc.NewDeliveryServiceGRPCClientImpl(appConfig)
+	notificationService := notifyService.NewNotificationService(appConfig, notificationRepository, userDeviceRepository, notificationCloudMessage, scheduleServiceClient)
 	notifyHandlerNotifyHandler := notifyHandler.NewNotifyHandler(notificationService)
+	notifyHookServiceNotifyHookService := notifyHookService.NewNotifyHookService(appConfig, notificationRepository, userDeviceRepository, notificationCloudMessage)
+	notificationHookHandlerNotificationHookHandler := notificationHookHandler.NewNotificationHookHandler(notifyHookServiceNotifyHookService)
 	authService := authserv.NewAuthService(appConfig)
 	authMiddleware := middleware.NewAuthMiddleware(authService, appConfig)
-	notificationRouter := notifyRouter.NewNotificationRouter(notifyHandlerNotifyHandler, authMiddleware)
+	notificationRouter := notifyRouter.NewNotificationRouter(notifyHandlerNotifyHandler, notificationHookHandlerNotificationHookHandler, authMiddleware)
 	notificationServiceServer := notificationGrpc.NewNotificationGrpcServer(notificationService)
 	grpcInterceptor := interceptor.NewGrpcInterceptor(appConfig)
 	connection := rabbitclient.NewRabbitClientConnection(appConfig)

@@ -54,3 +54,9 @@ GRPC:
 
 Firebase:
   ServiceAccountKeyFilePath: config/firebase-service-account.json
+
+GrpcInfrastructure:
+  ScheduleGRPC:
+    Connection: localhost:9665
+    CallbackURL: http://localhost:5050/api/v1/notifications/schedule/callback
+    APIGrpcKey: "Z6/gWGXJQMl9iVFDepzPbP6Y9wBnfq1FU2tgKu46KWRdm9Mkc1Ub4irkGQzN7ohbWLMAsL/46gG6dll9xx+oqg=="

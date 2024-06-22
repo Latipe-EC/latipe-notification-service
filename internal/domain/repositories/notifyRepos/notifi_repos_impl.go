@@ -96,11 +96,17 @@ func (n notificationRepository) TotalUnreadMessageOfUser(ctx context.Context, Ow
 
 func (n notificationRepository) Save(ctx context.Context, entity *notication.Notification) (*notication.Notification, error) {
 	entity.IsActive = true
-	_, err := n._notiCol.InsertOne(ctx, entity)
+	inserted, err := n._notiCol.InsertOne(ctx, entity)
 	if err != nil {
 		return nil, err
 	}
 
+	newId, err := primitive.ObjectIDFromHex(inserted.InsertedID.(primitive.ObjectID).Hex())
+	if err != nil {
+		log.Error(err)
+	}
+
+	entity.ID = newId
 	return entity, nil
 }
 
