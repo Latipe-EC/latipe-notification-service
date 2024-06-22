@@ -80,4 +80,10 @@ var (
 		ErrorCode: "GE013",
 		Message:   "Failed to parse datetime parameters with the given layout (yyyy-MM-dd HH:mm:ss)",
 	}
+
+	ErrNotificationNotFoundOrInActive = &responses.Error{
+		Code:      404,
+		ErrorCode: "GE014",
+		Message:   "Notification not found or inactive",
+	}
 )

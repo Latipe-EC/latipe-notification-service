@@ -2,14 +2,17 @@ package notifyHookService
 
 import (
 	"context"
+	"errors"
 	"firebase.google.com/go/messaging"
 	"github.com/gofiber/fiber/v2/log"
+	"go.mongodb.org/mongo-driver/mongo"
 	"latipe-notification-service/config"
 	dto "latipe-notification-service/internal/domain/dto/schedule_callback_dto"
 	"latipe-notification-service/internal/domain/entities/notication"
 	"latipe-notification-service/internal/domain/repositories/notifyRepos"
 	"latipe-notification-service/internal/domain/repositories/userDeviceRepos"
 	"latipe-notification-service/pkgUtils/fcm"
+	"latipe-notification-service/pkgUtils/util/errorUtils"
 )
 
 type notifyHookService struct {
@@ -35,6 +38,9 @@ func (n notifyHookService) CallBackFromScheduleService(ctx context.Context, req 
 		// get notification by id
 		notification, err := n.notiRepos.FindByID(ctx, jsonData.NotificationID)
 		if err != nil {
+			if errors.Is(err, mongo.ErrNoDocuments) {
+				return errorUtils.ErrNotificationNotFoundOrInActive
+			}
 			return err
 		}
 

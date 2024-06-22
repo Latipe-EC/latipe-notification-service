@@ -4,6 +4,7 @@ import (
 	"context"
 	"firebase.google.com/go/messaging"
 	"fmt"
+	"github.com/gofiber/fiber/v2/log"
 	dataJson "latipe-notification-service/internal/domain/dto/schedule_callback_dto"
 	"latipe-notification-service/internal/domain/entities/notication"
 	"latipe-notification-service/internal/infrastructure/grpcExt/scheduleGrpc"
@@ -12,7 +13,12 @@ import (
 
 func (n notificationService) sendCampaignToAllDevice(ctx context.Context, noti *notication.Notification) error {
 
-	if noti.ScheduleDisplay.After(time.Now()) {
+	scheduleTime, err := noti.ParseScheduleToTime()
+	if err != nil {
+		log.Error(err)
+	}
+
+	if scheduleTime.After(time.Now()) {
 		jsonData := dataJson.ScheduleJsonData{
 			NotificationID: noti.ID.Hex(),
 		}
@@ -25,7 +31,7 @@ func (n notificationService) sendCampaignToAllDevice(ctx context.Context, noti *
 		scheduleRequest := scheduleGrpc.CreateScheduleRequest{
 			From:     n.config.Server.Name,
 			Type:     scheduleGrpc.ONETIME,
-			Deadline: noti.ParseScheduleDateToString(),
+			Deadline: noti.ScheduleDisplay,
 			ReplyOn:  n.config.GrpcInfrastructure.ScheduleGRPC.CallbackURL,
 			XApiKey:  n.config.Server.APIKey,
 			Data:     data,

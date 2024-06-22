@@ -14,7 +14,7 @@ type Notification struct {
 	Body            string             `bson:"body" json:"body"`
 	Type            int                `bson:"type" json:"type"`
 	UnRead          bool               `bson:"unread" json:"unread"`
-	ScheduleDisplay time.Time          `bson:"schedule_display" json:"schedule_display"`
+	ScheduleDisplay string             `bson:"schedule_display" json:"schedule_display"`
 	IsActive        bool               `bson:"is_active" json:"is_active"`
 	RecallReason    string             `bson:"recall_reason,omitempty" json:"recall_reason,omitempty"`
 	CreatedBy       string             `bson:"created_by,omitempty" json:"created_by,omitempty"`
@@ -31,6 +31,18 @@ func NewNotification() Notification {
 	}
 }
 
-func (n Notification) ParseScheduleDateToString() string {
-	return n.ScheduleDisplay.Format("2006-01-02 15:04:05")
+func (n Notification) ParseScheduleToTime() (time.Time, error) {
+	// Define the layout according to the given date format
+	layout := "2006-01-02 15:04:05"
+
+	// Get the local location
+	location := time.Now().Location()
+
+	// Parse the date string using the specified layout and location
+	parsedDate, err := time.ParseInLocation(layout, n.ScheduleDisplay, location)
+	if err != nil {
+		return time.Time{}, err
+	}
+
+	return parsedDate, nil
 }

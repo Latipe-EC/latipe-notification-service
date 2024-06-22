@@ -55,6 +55,7 @@ func (n notificationService) GetNotificationsOfUser(ctx context.Context, req *dt
 	resp.Total = total
 	resp.Items = responses
 	resp.Size = req.Query.Size
+	resp.Page = req.Query.Page
 	resp.HasMore = req.Query.GetHasMore(total)
 
 	return &resp, nil
@@ -112,7 +113,7 @@ func (n notificationService) SendCampaignInternalService(ctx context.Context, re
 		noti.Type = notication.NOTIFY_CAMPAIGN
 		noti.UnRead = true
 		noti.CreatedBy = "INTERNAL_SERVICE"
-		noti.ScheduleDisplay = schedule
+		noti.ScheduleDisplay = req.ScheduleDisplay
 
 		insertedNoti, err := n.notificationRepo.Save(ctx, &noti)
 		if err != nil {
@@ -242,6 +243,7 @@ func (n notificationService) AdminGetAllCampaigns(ctx context.Context, req *dto.
 	resp.Total = total
 	resp.Items = responseItems
 	resp.Size = req.Query.Size
+	resp.Page = req.Query.Page
 	resp.HasMore = req.Query.GetHasMore(total)
 
 	return &resp, nil
@@ -263,7 +265,7 @@ func (n notificationService) AdminCreateCampaign(ctx context.Context, req *dto.A
 		noti.Body = req.Body
 		noti.Type = notication.NOTIFY_CAMPAIGN
 		noti.CreatedBy = req.UserID
-		noti.ScheduleDisplay = schedule
+		noti.ScheduleDisplay = req.ScheduleDisplay
 
 		insertedNoti, err := n.notificationRepo.Save(ctx, &noti)
 		if err != nil {
@@ -289,7 +291,12 @@ func (n notificationService) AdminRecallCampaign(ctx context.Context, req *dto.R
 		return nil, err
 	}
 
-	if noti.ScheduleDisplay.After(time.Now()) {
+	scheduleTime, err := noti.ParseScheduleToTime()
+	if err != nil {
+		log.Error(err)
+	}
+
+	if scheduleTime.After(time.Now()) {
 		noti.RecallReason = req.Reason
 		if err := n.notificationRepo.RecallCampaign(ctx, noti); err != nil {
 			return nil, err
