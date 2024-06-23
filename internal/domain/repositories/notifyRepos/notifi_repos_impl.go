@@ -18,7 +18,28 @@ type notificationRepository struct {
 }
 
 func NewNotificationRepository(dbClient *mongodb.MongoClient) NotificationRepository {
+
 	col := dbClient.GetDB().Collection("user_notification")
+
+	indexModel := mongo.IndexModel{
+		Keys: bson.M{
+			"campaign_topic": 1,
+		},
+		Options: options.Index().SetUnique(true),
+	}
+	_, err := col.Indexes().CreateOne(context.TODO(), indexModel)
+	if err != nil {
+		panic("error creating unique index:" + err.Error())
+	}
+
+	model := mongo.IndexModel{Keys: bson.D{{"campaign_topic", "text"}}}
+	name, err := col.Indexes().CreateOne(context.TODO(), model)
+	if err != nil {
+		panic(err)
+	}
+
+	log.Info("Name of index created: " + name)
+	log.Info("campaign_topic unique index created successfully")
 	return &notificationRepository{_notiCol: col}
 }
 

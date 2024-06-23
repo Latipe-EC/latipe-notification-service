@@ -276,7 +276,9 @@ func (n notificationService) AdminCreateCampaign(ctx context.Context, req *dto.A
 			return nil, err
 		}
 
-		resp := dto.AdminCreateCampaignResponse{}
+		resp := dto.AdminCreateCampaignResponse{
+			ID: insertedNoti.ID.Hex(),
+		}
 
 		return &resp, nil
 	}

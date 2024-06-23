@@ -276,7 +276,7 @@ func (n notifyHandler) AdminCreateCampaign(ctx *fiber.Ctx) error {
 		return errorUtils.ErrInvalidParameters
 	}
 
-	_, err := n.notifyService.AdminCreateCampaign(context, &req)
+	id, err := n.notifyService.AdminCreateCampaign(context, &req)
 	if err != nil {
 		switch {
 		case errors.Is(err, errorUtils.ErrParseDatetimeParameters):
@@ -291,6 +291,7 @@ func (n notifyHandler) AdminCreateCampaign(ctx *fiber.Ctx) error {
 	}
 
 	response := responses.DefaultSuccess
+	response.Data = id
 
 	return response.JSON(ctx)
 }
