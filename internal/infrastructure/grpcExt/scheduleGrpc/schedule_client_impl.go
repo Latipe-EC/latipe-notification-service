@@ -14,7 +14,7 @@ type scheduleServiceGRPCClientImpl struct {
 	cc  grpc.ClientConnInterface
 }
 
-func NewDeliveryServiceGRPCClientImpl(config *config.AppConfig) ScheduleServiceClient {
+func NewScheduleGrpcService(config *config.AppConfig) ScheduleServiceClient {
 	// Set up a connection to the server.
 	log.Info("[GRPC Client] open connection to delivery service")
 	conn, err := grpc.Dial(config.GrpcInfrastructure.ScheduleGRPC.Connection, grpc.WithTransportCredentials(insecure.NewCredentials()))

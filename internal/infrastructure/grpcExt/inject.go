@@ -6,5 +6,5 @@ import (
 )
 
 var Set = wire.NewSet(
-	scheduleGrpc.NewDeliveryServiceGRPCClientImpl,
+	scheduleGrpc.NewScheduleGrpcService,
 )

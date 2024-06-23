@@ -54,7 +54,7 @@ func New() (*Application, error) {
 	notificationRepository := notifyRepos.NewNotificationRepository(mongoClient)
 	userDeviceRepository := userDeviceRepos.NewUserDeviceRepository(mongoClient)
 	notificationCloudMessage := fcm.NewFirebaseSDK(appConfig)
-	scheduleServiceClient := scheduleGrpc.NewDeliveryServiceGRPCClientImpl(appConfig)
+	scheduleServiceClient := scheduleGrpc.NewScheduleGrpcService(appConfig)
 	notificationService := notifyService.NewNotificationService(appConfig, notificationRepository, userDeviceRepository, notificationCloudMessage, scheduleServiceClient)
 	notifyHandlerNotifyHandler := notifyHandler.NewNotifyHandler(notificationService)
 	notifyHookServiceNotifyHookService := notifyHookService.NewNotifyHookService(appConfig, notificationRepository, userDeviceRepository, notificationCloudMessage)
