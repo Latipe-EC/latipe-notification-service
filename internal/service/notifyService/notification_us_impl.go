@@ -102,7 +102,7 @@ func (n notificationService) SendCampaignInternalService(ctx context.Context, re
 		return nil, errorUtils.ErrParseDatetimeParameters
 	}
 
-	if schedule.After(time.Now().Add(15 * time.Minute)) {
+	if schedule.After(time.Now()) {
 		noti := notication.NewNotification()
 
 		noti.OwnerID = "all"
@@ -256,7 +256,7 @@ func (n notificationService) AdminCreateCampaign(ctx context.Context, req *dto.A
 		return nil, errorUtils.ErrParseDatetimeParameters
 	}
 
-	if schedule.After(time.Now().Add(15 * time.Minute)) {
+	if schedule.After(time.Now()) {
 		noti := notication.NewNotification()
 		noti.OwnerID = "all"
 		noti.CampaignTopic = req.CampaignTopic

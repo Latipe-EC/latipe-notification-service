@@ -11,6 +11,10 @@ import (
 	"time"
 )
 
+const (
+	_15_MIN = 15 * time.Minute
+)
+
 func (n notificationService) sendCampaignToAllDevice(ctx context.Context, noti *notication.Notification) error {
 
 	scheduleTime, err := noti.ParseScheduleToTime()
