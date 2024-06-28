@@ -110,14 +110,14 @@ func NewServer(
 		ErrorHandler: responses.CustomErrorHandler,
 	})
 
+	app.Use(cors.New(cors.Config{
+		AllowOrigins: "*",
+		AllowMethods: "*",
+		AllowHeaders: "*",
+	}))
+
 	recoverConfig := recover2.ConfigDefault
 	app.Use(recover2.New(recoverConfig))
-
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://127.0.0.1:5500, http://127.0.0.1:5173, http://localhost:5500, http://localhost:5173",
-		AllowHeaders: "*",
-		AllowMethods: "*",
-	}))
 
 	basicAuthConfig := basicauth.Config{
 		Users: map[string]string{

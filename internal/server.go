@@ -9,6 +9,7 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
+	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
@@ -97,6 +98,12 @@ func NewServer(
 		ErrorHandler: responses.CustomErrorHandler,
 	})
 
+	app.Use(cors.New(
+		cors.Config{
+			AllowOrigins: "*",
+			AllowMethods: "*",
+			AllowHeaders: "*",
+		}))
 	//recover middleware
 	recoverConfig := recoverFiber.ConfigDefault
 	app.Use(recoverFiber.New(recoverConfig))

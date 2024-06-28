@@ -3,6 +3,7 @@ package notifyService
 import (
 	"context"
 	"firebase.google.com/go/messaging"
+	"fmt"
 	"github.com/gofiber/fiber/v2/log"
 	"latipe-notification-service/config"
 	"latipe-notification-service/internal/domain/dto"
@@ -139,6 +140,7 @@ func (n notificationService) SendNotification(ctx context.Context, req *dto.Send
 	noti.Image = req.Image
 	noti.Body = req.Body
 	noti.Type = notication.NOTIFY_USER
+	noti.CampaignTopic = fmt.Sprintf("message_%s_%s", req.UserID, time.Now().Format("20060102@150405"))
 
 	entity, err := n.notificationRepo.Save(ctx, &noti)
 	if err != nil {
