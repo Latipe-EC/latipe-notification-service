@@ -9,7 +9,6 @@ import (
 	"github.com/gofiber/fiber/v2"
 	"github.com/gofiber/fiber/v2/middleware/adaptor"
 	"github.com/gofiber/fiber/v2/middleware/basicauth"
-	"github.com/gofiber/fiber/v2/middleware/cors"
 	"github.com/gofiber/fiber/v2/middleware/healthcheck"
 	"github.com/gofiber/fiber/v2/middleware/logger"
 	"github.com/gofiber/fiber/v2/middleware/monitor"
@@ -101,12 +100,6 @@ func NewServer(
 	//recover middleware
 	recoverConfig := recoverFiber.ConfigDefault
 	app.Use(recoverFiber.New(recoverConfig))
-
-	app.Use(cors.New(cors.Config{
-		AllowOrigins: "http://127.0.0.1:5500, http://127.0.0.1:5173, http://localhost:5500, http://localhost:5173",
-		AllowHeaders: "*",
-		AllowMethods: "*",
-	}))
 
 	//providing basic authentication for metrics endpoints
 	basicAuthConfig := basicauth.Config{
