@@ -8,7 +8,7 @@ import (
 type UserDeviceRepository interface {
 	// queries
 	FindByID(ctx context.Context, entityID string) (*userDevice.UserDevice, error)
-	FindByDeviceID(ctx context.Context, deviceID string) (*userDevice.UserDevice, error)
+	FindByDeviceToken(ctx context.Context, deviceID string) (*userDevice.UserDevice, error)
 	FindActiveDeviceByUserID(ctx context.Context, userID string) ([]*userDevice.UserDevice, error)
 	GetAllActiveDeviceToken(ctx context.Context) ([]string, error)
 	// commands

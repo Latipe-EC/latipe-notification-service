@@ -86,4 +86,9 @@ var (
 		ErrorCode: "GE014",
 		Message:   "Notification not found or inactive",
 	}
+	ErrDeviceAlreadyRegistered = &responses.Error{
+		Code:      400,
+		ErrorCode: "GE014",
+		Message:   "Device already registered",
+	}
 )

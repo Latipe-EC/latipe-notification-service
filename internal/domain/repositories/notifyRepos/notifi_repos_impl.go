@@ -83,7 +83,7 @@ func (n notificationRepository) FindByOwnerID(ctx context.Context, OwnerID strin
 func (n notificationRepository) FindUnreadMessageOfUser(ctx context.Context, OwnerID string, query *pagable.Query) ([]*notication.Notification, int, error) {
 	var entities []*notication.Notification
 
-	opts := options.Find().SetLimit(int64(query.GetLimit())).SetSkip(int64(query.GetOffset()))
+	opts := options.Find().SetLimit(int64(query.GetLimit())).SetSkip(int64(query.GetOffset())).SetSort(bson.M{"created_at": -1})
 	filter := bson.M{"owner_id": bson.M{"$in": []string{OwnerID, "all"}}, "unread": true, "is_active": true}
 
 	cursor, err := n._notiCol.Find(ctx, filter, opts)

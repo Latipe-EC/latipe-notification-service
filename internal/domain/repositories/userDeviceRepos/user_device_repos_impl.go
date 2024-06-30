@@ -31,10 +31,10 @@ func (u userDeviceRepository) FindByID(ctx context.Context, entityID string) (*u
 	return &entity, nil
 }
 
-func (u userDeviceRepository) FindByDeviceID(ctx context.Context, deviceID string) (*userDevice.UserDevice, error) {
+func (u userDeviceRepository) FindByDeviceToken(ctx context.Context, deviceID string) (*userDevice.UserDevice, error) {
 	var entity userDevice.UserDevice
 
-	err := u._deviceCol.FindOne(ctx, bson.M{"device_id": deviceID}).Decode(&entity)
+	err := u._deviceCol.FindOne(ctx, bson.M{"device_token": deviceID}).Decode(&entity)
 	if err != nil {
 		return nil, err
 	}
@@ -60,11 +60,12 @@ func (u userDeviceRepository) FindActiveDeviceByUserID(ctx context.Context, user
 }
 
 func (u userDeviceRepository) Save(ctx context.Context, entity *userDevice.UserDevice) (*userDevice.UserDevice, error) {
-	_, err := u._deviceCol.InsertOne(ctx, entity)
+	lastId, err := u._deviceCol.InsertOne(ctx, entity)
 	if err != nil {
 		return nil, err
 	}
 
+	entity.ID = lastId.InsertedID.(primitive.ObjectID)
 	return entity, nil
 }
 

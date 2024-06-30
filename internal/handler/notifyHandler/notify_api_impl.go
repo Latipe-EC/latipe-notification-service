@@ -221,6 +221,11 @@ func (n notifyHandler) RegisterNewUserDevice(ctx *fiber.Ctx) error {
 
 	data, err := n.notifyService.RegisterNewUserDevice(context, &req)
 	if err != nil {
+		switch {
+		case errors.Is(err, errorUtils.ErrDeviceAlreadyRegistered):
+			return errorUtils.ErrDeviceAlreadyRegistered
+		}
+
 		return errorUtils.ErrInternalServer
 	}
 

@@ -51,9 +51,9 @@ func (mr *MockUserDeviceRepositoryMockRecorder) FindActiveDeviceByUserID(ctx, us
 }
 
 // FindByDeviceID mocks base method.
-func (m *MockUserDeviceRepository) FindByDeviceID(ctx context.Context, deviceID string) (*userDevice.UserDevice, error) {
+func (m *MockUserDeviceRepository) FindByDeviceToken(ctx context.Context, deviceID string) (*userDevice.UserDevice, error) {
 	m.ctrl.T.Helper()
-	ret := m.ctrl.Call(m, "FindByDeviceID", ctx, deviceID)
+	ret := m.ctrl.Call(m, "FindByDeviceToken", ctx, deviceID)
 	ret0, _ := ret[0].(*userDevice.UserDevice)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
@@ -62,7 +62,7 @@ func (m *MockUserDeviceRepository) FindByDeviceID(ctx context.Context, deviceID 
 // FindByDeviceID indicates an expected call of FindByDeviceID.
 func (mr *MockUserDeviceRepositoryMockRecorder) FindByDeviceID(ctx, deviceID interface{}) *gomock.Call {
 	mr.mock.ctrl.T.Helper()
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByDeviceID", reflect.TypeOf((*MockUserDeviceRepository)(nil).FindByDeviceID), ctx, deviceID)
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "FindByDeviceToken", reflect.TypeOf((*MockUserDeviceRepository)(nil).FindByDeviceToken), ctx, deviceID)
 }
 
 // FindByID mocks base method.

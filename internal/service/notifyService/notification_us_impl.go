@@ -204,6 +204,11 @@ func (n notificationService) ClearAllNotification(ctx context.Context, req *dto.
 }
 
 func (n notificationService) RegisterNewUserDevice(ctx context.Context, req *dto.RegisterNewDevice) (*dto.RegisterNewDeviceResponse, error) {
+	existDevice, _ := n.userDeviceRepo.FindByDeviceToken(ctx, req.DeviceToken)
+	if existDevice != nil && existDevice.UserID == req.UserID {
+		return nil, errorUtils.ErrDeviceAlreadyRegistered
+	}
+
 	newDevice := userDevice.UserDevice{
 		UserID:      req.UserID,
 		DeviceInfo:  req.DeviceInfo,
@@ -220,10 +225,8 @@ func (n notificationService) RegisterNewUserDevice(ctx context.Context, req *dto
 		return nil, err
 	}
 
-	resp := dto.RegisterNewDeviceResponse{}
-
-	if err := mapper.BindingStruct(entity, &resp); err != nil {
-		return nil, err
+	resp := dto.RegisterNewDeviceResponse{
+		ID: entity.ID.Hex(),
 	}
 
 	return &resp, nil
